@@ -1,0 +1,46 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="px-margin pt-margin">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="font-display text-h1 text-on-surface">Active Bookings</h1>
+            <p class="font-body-md text-on-surface-variant">Manage your currently approved event gear.</p>
+        </div>
+    </div>
+
+    <div class="glass-panel rounded-3xl overflow-hidden border border-outline-variant/30 shadow-xl">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-container-high/50 text-on-surface-variant font-label-sm text-xs uppercase tracking-widest">
+                    <th class="px-6 py-4">Item</th>
+                    <th class="px-6 py-4">Customer</th>
+                    <th class="px-6 py-4 text-center">Quantity</th>
+                    <th class="px-6 py-4">Event Date</th>
+                    <th class="px-6 py-4 text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10">
+                {% for booking in bookings %}
+                <tr class="table-row-hover">
+                    <td class="px-6 py-4 font-bold text-on-surface">{{ booking.item.name }}</td>
+                    <td class="px-6 py-4 text-on-surface-variant">{{ booking.customer.username }}</td>
+                    <td class="px-6 py-4 text-center font-mono">{{ booking.quantity }}</td>
+                    <td class="px-6 py-4 text-on-surface-variant">{{ booking.start_date }} to {{ booking.end_date }}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] uppercase font-bold border border-emerald-500/20">Approved</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-20 text-center text-on-surface-variant opacity-50">
+                        <span class="material-symbols-outlined text-4xl mb-2">calendar_today</span>
+                        <p>No active bookings found.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'events/base.html' %}
+
+{% block body_class %}bg-surface text-on-surface font-body-md min-h-screen flex items-center justify-center p-4 relative overflow-hidden{% endblock %}
+
+{% block content %}
+<style>
+    /* Removed floating labels for cleaner design */
+</style>
+
+<!-- Ambient Background Decoration -->
+<div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+    <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-container/20 blur-[100px]"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-secondary-container/10 blur-[120px]"></div>
+</div>
+
+<!-- Main Container -->
+<div class="w-full max-w-[480px] z-10">
+    <div class="glass-panel rounded-[24px] p-lg w-full transform transition-all duration-300 shadow-2xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-surface-container shadow-sm mb-4">
+                <span class="material-symbols-outlined text-h1 text-primary" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+            </div>
+            <h1 class="font-h1 text-h1 text-on-surface mb-2 tracking-tight">StageKit Manager</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Luminous Precision in Logistics.</p>
+        </div>
+
+        <!-- Login Form -->
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="bg-error-container text-on-error-container p-3 rounded-lg text-sm mb-4">
+                Invalid username or password.
+            </div>
+            {% endif %}
+
+            <!-- Username Input -->
+            <div class="space-y-2">
+                <label for="id_username" class="font-label-sm text-label-sm text-on-surface-variant ml-1">Username</label>
+                <div class="relative bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200">
+                    <input type="text" name="username" class="block w-full px-4 py-3 text-on-surface bg-transparent border-0 focus:ring-0" id="id_username" required>
+                </div>
+            </div>
+
+            <!-- Password Input -->
+            <div class="space-y-2">
+                <label for="id_password" class="font-label-sm text-label-sm text-on-surface-variant ml-1">Password</label>
+                <div class="relative bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200">
+                    <input type="password" name="password" class="block w-full px-4 py-3 text-on-surface bg-transparent border-0 focus:ring-0 pr-12" id="id_password" required>
+                    <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" onclick="const p = document.getElementById('id_password'); const i = this.querySelector('span'); if(p.type==='password'){p.type='text'; i.textContent='visibility';}else{p.type='password'; i.textContent='visibility_off';}">
+                        <span class="material-symbols-outlined">visibility_off</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Remember & Forgot -->
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex items-center"></div>
+                <div class="text-sm">
+                    <a href="{% url 'forgot_password' %}" class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-variant transition-colors">
+                        Forgot password?
+                    </a>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button type="submit" class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-sm font-label-sm text-label-sm text-on-primary bg-primary hover:bg-on-primary-fixed-variant focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary active:scale-95 transition-all duration-200">
+                Sign in to Workspace
+            </button>
+        </form>
+
+        <!-- Footer Links -->
+        <div class="mt-8 text-center flex flex-col gap-2">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                Need a Customer account? 
+                <a href="{% url 'signup_customer' %}" class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-variant transition-colors ml-1">Sign Up</a>
+            </p>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                Want to rent out gear? 
+                <a href="{% url 'signup_owner' %}" class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-variant transition-colors ml-1">Become an Owner</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

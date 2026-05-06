@@ -1,0 +1,269 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
+    <div>
+        <h2 class="font-display text-h1 text-on-surface">Book Equipment</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Review details and secure your rental.</p>
+    </div>
+    <a href="{% url 'browse_inventory' %}" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-label-sm">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Cancel & Return
+    </a>
+</div>
+
+<div class="px-margin pb-xl max-w-[1000px] mx-auto w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Item Summary Column -->
+        <div class="lg:col-span-1">
+            <div class="glass-panel rounded-2xl overflow-hidden border border-outline-variant/30 shadow-lg sticky top-8">
+                <div class="aspect-video relative overflow-hidden bg-surface-container-high">
+                    {% if item.images %}
+                    <img src="{{ item.images.url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex flex-col items-center justify-center text-on-surface-variant/40">
+                        <span class="material-symbols-outlined text-4xl mb-1">inventory_2</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-6">
+                    <h3 class="font-h2 text-h2 text-on-surface mb-1">{{ item.name }}</h3>
+                    <p class="text-sm text-primary font-bold mb-4">{{ item.get_category_display }}</p>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-on-surface-variant">Owner</span>
+                            <span class="text-on-surface font-medium">
+                                {% if item.owner.company_name %}{{ item.owner.company_name }}{% else %}StageKit Partner{% endif %}{% if item.owner.district %}, {{ item.owner.district }}{% endif %}
+                            </span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-on-surface-variant">Available Units</span>
+                            <span class="text-on-surface font-medium">{{ item.quantity }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-on-surface-variant">Price / Day</span>
+                            <span class="text-primary font-bold">₹{{ item.price_per_day }}</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-surface-container-high rounded-xl border border-outline-variant/50">
+                        <p class="text-xs text-on-surface-variant leading-relaxed">
+                            {{ item.description|default:"Professional grade equipment maintained by StageKit partners." }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Form Column -->
+        <div class="lg:col-span-2">
+            <div class="glass-panel rounded-2xl p-lg border border-outline-variant/30 shadow-xl">
+                <h3 class="font-h3 text-h3 text-on-surface mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">event_note</span>
+                    Booking Details
+                </h3>
+
+                {% if messages %}
+                <div class="mb-6 space-y-2">
+                    {% for message in messages %}
+                    <div class="p-4 rounded-xl bg-error-container text-on-error-container text-sm flex items-center gap-3">
+                        <span class="material-symbols-outlined">error</span>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="POST" class="space-y-8">
+                    {% csrf_token %}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- District -->
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Delivery District</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                                    <span class="material-symbols-outlined text-[20px]">location_on</span>
+                                </span>
+                                <input type="text" name="district" id="id_district" value="{{ form.district.value|default:'' }}" placeholder="District name" class="block w-full pl-12 pr-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required>
+                            </div>
+                        </div>
+
+                        <!-- Venue -->
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Event Venue</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                                    <span class="material-symbols-outlined text-[20px]">stadium</span>
+                                </span>
+                                <input type="text" name="venue" id="id_venue" value="{{ form.venue.value|default:'' }}" placeholder="Full address or venue name" class="block w-full pl-12 pr-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required>
+                            </div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Quantity Required</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                                    <span class="material-symbols-outlined text-[20px]">format_list_numbered</span>
+                                </span>
+                                <input type="number" name="quantity" id="id_quantity" value="{{ form.quantity.value|default:1 }}" class="block w-full pl-12 pr-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required min="1" max="{{ item.quantity }}">
+                            </div>
+                        </div>
+
+                        <!-- Start Date -->
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Start Date</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                                    <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+                                </span>
+                                <input type="date" name="start_date" id="id_start_date" value="{{ form.start_date.value|default:'' }}" class="block w-full pl-12 pr-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required>
+                            </div>
+                        </div>
+
+                        <!-- End Date -->
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">End Date</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                                    <span class="material-symbols-outlined text-[20px]">event</span>
+                                </span>
+                                <input type="date" name="end_date" id="id_end_date" value="{{ form.end_date.value|default:'' }}" class="block w-full pl-12 pr-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="space-y-4">
+                        <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Additional Services</label>
+                        
+                        <label class="flex items-start gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant hover:border-primary transition-colors cursor-pointer group">
+                            <div class="mt-1">
+                                <input type="checkbox" name="needs_transportation" id="id_needs_transportation" {% if form.needs_transportation.value %}checked{% endif %} class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary">
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Transportation & Delivery (₹1000 - ₹2500)</p>
+                                <p class="text-xs text-on-surface-variant">Include professional transport to and from the venue.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant hover:border-primary transition-colors cursor-pointer group">
+                            <div class="mt-1">
+                                <input type="checkbox" name="needs_setup" id="id_needs_setup" {% if form.needs_setup.value %}checked{% endif %} class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary">
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Technical Setup Support (+₹1500)</p>
+                                <p class="text-xs text-on-surface-variant">Includes Engineer + Helper for {{ item.category }} services.</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Summary & Submit -->
+                    <div class="pt-6 border-t border-outline-variant/30 space-y-4">
+                        <div class="flex flex-col gap-2 p-4 bg-surface-container-high/50 rounded-2xl">
+                            <div class="flex justify-between text-xs text-on-surface-variant">
+                                <span>Equipment Subtotal</span>
+                                <span id="item-subtotal">₹0.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-on-surface-variant">
+                                <span>Transportation</span>
+                                <span id="transport-preview">₹0.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-on-surface-variant">
+                                <span>Technical Support</span>
+                                <span id="tech-preview">₹0.00</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-body-md text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">Estimated Total</span>
+                            <span class="font-display text-h1 text-primary">₹<span id="total-preview">0.00</span></span>
+                        </div>
+                        <button type="submit" class="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg font-label-sm text-label-sm text-on-primary bg-primary hover:bg-on-primary-fixed-variant focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary active:scale-95 transition-all duration-200">
+                            <span class="material-symbols-outlined text-[20px]">verified</span>
+                            Submit Booking Request
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const itemPrice = parseFloat("{{ item.price_per_day }}");
+    const ownerDistrict = "{{ item.owner.district }}".toLowerCase();
+    
+    const districtInput = document.getElementById('id_district');
+    const qtyInput = document.getElementById('id_quantity');
+    const startDateInput = document.getElementById('id_start_date');
+    const endDateInput = document.getElementById('id_end_date');
+    const transportCheck = document.getElementById('id_needs_transportation');
+    const techCheck = document.getElementById('id_needs_setup');
+    
+    const itemSubtotal = document.getElementById('item-subtotal');
+    const transportPreview = document.getElementById('transport-preview');
+    const techPreview = document.getElementById('tech-preview');
+    const totalPreview = document.getElementById('total-preview');
+
+    function updateCosts() {
+        const qty = parseInt(qtyInput.value) || 0;
+        const district = districtInput.value.toLowerCase().trim();
+        
+        // Days Calculation
+        let days = 1;
+        if (startDateInput.value && endDateInput.value) {
+            const start = new Date(startDateInput.value);
+            const end = new Date(endDateInput.value);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+            days = diffDays > 0 ? diffDays : 1;
+        }
+
+        // Item Subtotal
+        const equipmentCost = qty * itemPrice * days;
+        itemSubtotal.textContent = "₹" + equipmentCost.toFixed(2) + (days > 1 ? ` (${days} days)` : '');
+        
+        // Transport
+        let transportCost = 0;
+        if (transportCheck.checked && district) {
+            transportCost = (district === ownerDistrict) ? 1000 : 2500;
+        }
+        transportPreview.textContent = "₹" + transportCost.toFixed(2);
+        
+        // Tech Support
+        let techCost = 0;
+        if (techCheck.checked) {
+            techCost = 1500; // Standard rate as per backend
+        }
+        techPreview.textContent = "₹" + techCost.toFixed(2);
+        
+        // Total
+        const total = equipmentCost + transportCost + techCost;
+        totalPreview.textContent = total.toFixed(2);
+    }
+
+    [districtInput, qtyInput, startDateInput, endDateInput, transportCheck, techCheck].forEach(el => {
+        el.addEventListener('input', updateCosts);
+        el.addEventListener('change', updateCosts);
+    });
+
+    // Initial calculation
+    updateCosts();
+</script>
+
+<style>
+    /* Styling for the date input to match the theme better */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

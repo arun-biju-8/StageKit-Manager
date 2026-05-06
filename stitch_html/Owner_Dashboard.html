@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageKit Pro - Owner Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e4e1ee",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#4f46e5",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "outline": "#777587",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fcf8ff",
+                        "tertiary-container": "#a44100",
+                        "surface-tint": "#4d44e3",
+                        "surface-container": "#f0ecf9",
+                        "inverse-surface": "#302f39",
+                        "on-secondary-container": "#231791",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f5f2ff",
+                        "secondary-container": "#8f8bff",
+                        "secondary-fixed": "#e2dfff",
+                        "inverse-on-surface": "#f3effc",
+                        "error": "#ba1a1a",
+                        "primary": "#3525cd",
+                        "surface-container-highest": "#e4e1ee",
+                        "surface-dim": "#dcd8e5",
+                        "on-surface": "#1b1b24",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-tertiary-fixed": "#351000",
+                        "inverse-primary": "#c3c0ff",
+                        "on-primary-fixed": "#0f0069",
+                        "background": "#fcf8ff",
+                        "primary-fixed": "#e2dfff",
+                        "tertiary": "#7e3000",
+                        "surface-container-high": "#eae6f4",
+                        "secondary": "#544fc0",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "on-surface-variant": "#464555",
+                        "surface": "#fcf8ff",
+                        "tertiary-fixed": "#ffdbcc",
+                        "on-background": "#1b1b24",
+                        "on-secondary-fixed": "#0f0069",
+                        "outline-variant": "#c7c4d8",
+                        "on-secondary-fixed-variant": "#3b35a7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "xl": "80px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "display": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(55, 48, 163, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar Component -->
+<nav class="hidden md:flex flex-col p-6 gap-y-2 h-screen w-[280px] bg-surface-container-low/80 dark:bg-inverse-surface/60 backdrop-blur-2xl border-r border-white/20 dark:border-white/10 shadow-xl shadow-primary/10 fixed left-0 top-0 z-40">
+<!-- Header -->
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-full overflow-hidden shadow-sm shadow-primary/10 border border-white/50">
+<img alt="StageKit Admin" class="w-full h-full object-cover" data-alt="A professional headshot of a confident event manager in a well-lit modern office space. The lighting is soft and natural, creating a premium light-mode aesthetic. The color palette features warm whites, soft greys, and subtle indigo accents. The mood is authoritative yet approachable, reflecting a high-end logistics platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDNyGlWpSKoE9wLpKXY6gEDfiKdHARJ96WV2H1vtrkxcHC4LTaj00PVwCyZBqGToxd5O_7WWH-_vCa8MYLPQMvBdv5hodT6owqdg15Ee7diCmN15tImQP9luHRy3e-OXVbkoeBAs5VLhAxOWkLYHRCH5HqH7JexLYRpq-2-KddaO-KJZRtlxfBXhVlQfKOSoImJRm54jGE_V5svcF_ZIrsEk4ohJYifOsSQW50-q3ku15NIHDqZNRpGPj5BtwTy4_PcLPPsWDwKEcg"/>
+</div>
+<div>
+<h1 class="font-display text-h2 font-bold text-primary dark:text-primary-fixed-dim">StageKit Pro</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Backstage Management</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-xl font-semibold shadow-inner scale-95 transition-all duration-200 cubic-bezier(0.4, 0, 0.2, 1)" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-sm text-label-sm">Team</span>
+</a>
+</div>
+<!-- CTA -->
+<div class="mt-auto mb-6">
+<button class="w-full flex justify-center items-center gap-2 py-3 px-4 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm hover:scale-95 transition-transform duration-200 shadow-md shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Add Equipment
+            </button>
+</div>
+<!-- Footer Links -->
+<div class="flex flex-col gap-1 border-t border-white/20 pt-4">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-error hover:bg-error-container transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="font-label-sm text-label-sm">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-[280px] p-6 md:p-margin max-w-[1440px] mx-auto w-full">
+<!-- Header Section -->
+<header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+<div>
+<h2 class="font-h1 text-h1 text-on-surface">Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Monitor your logistics and pending requests.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2.5 bg-surface-container-high border-none rounded-full font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface transition-all w-full sm:w-64" placeholder="Search orders..." type="text"/>
+</div>
+</div>
+</header>
+<!-- Dynamic Stats Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Stat Card 1 -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">inventory</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high font-label-sm text-label-sm text-on-surface-variant">+12%</span>
+</div>
+<div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-1">Total Owned Inventory</h3>
+<p class="font-display text-display text-on-surface">1,248</p>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[24px]">local_shipping</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary">Live</span>
+</div>
+</div>
+<div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-1">Active Orders</h3>
+<p class="font-display text-display text-on-surface">42</p>
+</div>
+</div>
+<!-- Quick Action Card -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:border-primary/30 transition-all group">
+<div class="w-16 h-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-md shadow-primary/10">
+<span class="material-symbols-outlined text-[32px]">add_circle</span>
+</div>
+<h3 class="font-h3 text-h3 text-on-surface mb-2">Quick Add</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Register new inventory items to your warehouse.</p>
+</div>
+</section>
+<!-- Pending Booking Requests Section -->
+<section>
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-h2 text-h2 text-on-surface">Pending Requests</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Review and approve incoming equipment bookings.</p>
+</div>
+<button class="text-primary font-label-sm text-label-sm hover:underline underline-offset-4">View All</button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Request Item 1 -->
+<div class="glass-panel rounded-xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 hover:shadow-lg hover:shadow-primary/5 transition-shadow">
+<div class="flex items-center gap-4 flex-1">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<h4 class="font-h3 text-h3 text-on-surface">Nexus Tech Conference</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Requested by Sarah Jenkins • Oct 15 - Oct 18</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2 lg:w-1/3">
+<span class="px-3 py-1.5 rounded-full bg-surface-container border border-white text-on-surface font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">headphones</span>
+                            Audio Rig (Full)
+                        </span>
+<span class="px-3 py-1.5 rounded-full bg-primary-container/20 border border-primary/20 text-primary font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">local_shipping</span>
+                            Transportation
+                        </span>
+<span class="px-3 py-1.5 rounded-full bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">engineering</span>
+                            Tech Setup
+                        </span>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="px-4 py-2 rounded-lg bg-surface-container hover:bg-error-container hover:text-error text-on-surface-variant font-label-sm text-label-sm transition-colors border border-transparent hover:border-error/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">close</span>
+                            Reject
+                        </button>
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:scale-95 transition-transform flex items-center gap-2 shadow-sm shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">check</span>
+                            Approve
+                        </button>
+</div>
+</div>
+<!-- Request Item 2 -->
+<div class="glass-panel rounded-xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 hover:shadow-lg hover:shadow-primary/5 transition-shadow">
+<div class="flex items-center gap-4 flex-1">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined">domain</span>
+</div>
+<div>
+<h4 class="font-h3 text-h3 text-on-surface">Horizon Music Festival</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Requested by Marcus Chen • Nov 02 - Nov 05</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2 lg:w-1/3">
+<span class="px-3 py-1.5 rounded-full bg-surface-container border border-white text-on-surface font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+                            Stage Lighting
+                        </span>
+<span class="px-3 py-1.5 rounded-full bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">engineering</span>
+                            Tech Setup
+                        </span>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="px-4 py-2 rounded-lg bg-surface-container hover:bg-error-container hover:text-error text-on-surface-variant font-label-sm text-label-sm transition-colors border border-transparent hover:border-error/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">close</span>
+                            Reject
+                        </button>
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:scale-95 transition-transform flex items-center gap-2 shadow-sm shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">check</span>
+                            Approve
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

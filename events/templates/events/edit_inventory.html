@@ -1,0 +1,114 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
+    <div>
+        <h2 class="font-display text-h1 text-on-surface">Edit Equipment</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Update details for: <span class="text-primary font-bold">{{ item.name }}</span></p>
+    </div>
+    <a href="{% url 'inventory_list' %}" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-label-sm">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Back to List
+    </a>
+</div>
+
+<div class="px-margin pb-xl max-w-[800px] mx-auto w-full">
+    <div class="glass-panel rounded-2xl p-lg border border-outline-variant/30 shadow-xl">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="bg-error-container text-on-error-container p-4 rounded-xl text-sm mb-6">
+                Please correct the errors below.
+                {{ form.errors }}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Item Name -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Equipment Name</label>
+                    <input type="text" name="name" value="{{ form.name.value|default:'' }}" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required>
+                </div>
+
+                <!-- Category -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Category</label>
+                    <select name="category" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required>
+                        <option value="sound" {% if form.category.value == 'sound' %}selected{% endif %}>Sound</option>
+                        <option value="light" {% if form.category.value == 'light' %}selected{% endif %}>Light</option>
+                        <option value="led" {% if form.category.value == 'led' %}selected{% endif %}>LED Wall</option>
+                        <option value="sfx" {% if form.category.value == 'sfx' %}selected{% endif %}>Special Effects</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Quantity -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Quantity Available</label>
+                    <input type="number" name="quantity" value="{{ form.quantity.value|default:'' }}" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required min="1">
+                </div>
+
+                <!-- Price -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Price Per Day (₹)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">₹</span>
+                        <input type="number" name="price_per_day" value="{{ form.price_per_day.value|default:'' }}" class="block w-full pl-8 pr-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" required step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Description</label>
+                <textarea name="description" rows="4" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface">{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Update Equipment Image (Optional)</label>
+                <div class="flex flex-col items-center justify-center w-full">
+                    <label for="id_image" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-outline-variant rounded-2xl cursor-pointer bg-surface-container-lowest hover:bg-surface-container-low transition-all group overflow-hidden relative">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6 {% if item.images %}hidden{% endif %}" id="upload-placeholder">
+                            <span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors mb-2">add_a_photo</span>
+                            <p class="text-sm text-on-surface-variant">Click to upload new image</p>
+                        </div>
+                        <img id="image-preview" src="{% if item.images %}{{ item.images.url }}{% endif %}" class="{% if not item.images %}hidden{% endif %} absolute inset-0 w-full h-full object-cover z-10" />
+                        <input id="id_image" name="images" type="file" class="hidden" accept="image/*" onchange="previewImage(this)" />
+                    </label>
+                    {% if item.images %}
+                    <p class="text-xs text-on-surface-variant mt-2">Showing current image. Upload to replace.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="pt-4 flex gap-4">
+                <a href="{% url 'inventory_list' %}" class="flex-1 text-center py-4 px-4 border border-outline-variant rounded-xl font-label-sm text-label-sm text-on-surface hover:bg-surface-container-high transition-all">
+                    Cancel
+                </a>
+                <button type="submit" class="flex-[2] flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg font-label-sm text-label-sm text-on-primary bg-primary hover:bg-on-primary-fixed-variant focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary active:scale-95 transition-all duration-200">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('upload-placeholder');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                if(placeholder) placeholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}

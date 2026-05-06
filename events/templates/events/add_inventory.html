@@ -1,0 +1,261 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
+    <div>
+        <h2 class="font-display text-h1 text-on-surface">Add Equipment</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">List new gear for rent in your inventory.</p>
+    </div>
+    <a href="{% url 'inventory_list' %}"
+        class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Back to List
+    </a>
+</div>
+
+<div class="px-margin pb-xl max-w-[800px] mx-auto w-full">
+    <div class="glass-panel rounded-2xl p-lg border border-outline-variant/30 shadow-xl">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Item Name -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Equipment Name</label>
+                    <input type="text" name="name"
+                        class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface placeholder:text-on-surface-variant/50"
+                        placeholder="e.g. JBL SRX800" required>
+                </div>
+
+                <!-- Category -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Category</label>
+                    <select name="category" id="id_category"
+                        class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface"
+                        required onchange="updateSubcategories()">
+                        <option value="">Select Category</option>
+                        <option value="sound">Sound</option>
+                        <option value="light">Light</option>
+                        <option value="led">LED Wall</option>
+                        <option value="sfx">Special Effects</option>
+                        <option value="generator">Generator</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Cascading Fields -->
+            <div id="cascading-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                <!-- Subcategory -->
+                <div class="space-y-2" id="subcategory-wrapper">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1"
+                        id="subcategory-label">Sub-Category</label>
+                    <div id="subcategory-input-container">
+                        <select name="subcategory" id="id_subcategory"
+                            class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface"
+                            onchange="updateTypes()">
+                            <option value="">Select Sub-Category</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sub-type -->
+                <div class="space-y-2 hidden" id="type-wrapper">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1"
+                        id="type-label">Type/Specifics</label>
+                    <div id="type-input-container">
+                        <select name="sub_type" id="id_sub_type"
+                            class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface"
+                            onchange="checkTypeOthers()">
+                            <option value="">Select Type</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Others Text Area (Conditional) -->
+            <div id="others-container" class="space-y-2 hidden">
+                <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Specify "Other" Details</label>
+                <textarea id="id_others_text"
+                    class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface"
+                    placeholder="Please specify your equipment details..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Quantity -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Quantity Available</label>
+                    <input type="number" name="quantity"
+                        class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface"
+                        required min="1">
+                </div>
+
+                <!-- Price -->
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Price Per Day (₹)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">₹</span>
+                        <input type="number" name="price_per_day"
+                            class="block w-full pl-8 pr-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface"
+                            required step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Description</label>
+                <textarea name="description" rows="4"
+                    class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface placeholder:text-on-surface-variant/50"
+                    placeholder="Provide details about the equipment condition, specs, etc."></textarea>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Equipment Image</label>
+                <div class="flex flex-col items-center justify-center w-full">
+                    <label for="id_image"
+                        class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-outline-variant rounded-2xl cursor-pointer bg-surface-container-lowest hover:bg-surface-container-low transition-all group overflow-hidden relative">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-placeholder">
+                            <span
+                                class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors mb-2">add_a_photo</span>
+                            <p class="text-sm text-on-surface-variant">Click to upload or drag and drop</p>
+                            <p class="text-xs text-on-surface-variant/60 mt-1">PNG, JPG or WebP (MAX. 800x400px)</p>
+                        </div>
+                        <img id="image-preview" class="hidden absolute inset-0 w-full h-full object-cover z-10" />
+                        <input id="id_image" name="images" type="file" class="hidden" accept="image/*"
+                            onchange="previewImage(this)" />
+                    </label>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit"
+                    class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg font-label-sm text-label-sm text-on-primary bg-primary hover:bg-on-primary-fixed-variant focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary active:scale-95 transition-all duration-200">
+                    Add to Inventory
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const equipmentData = {
+        "sound": {
+            "Mixer": ["Analogue", "Digital", "Powered", "Others"],
+            "Speaker": ["Wireless", "Active", "Passive", "Line Array", "Monitor", "Others"],
+            "Microphone": ["Dynamic", "Condenser", "Wireless", "4 Side", "Others"],
+            "Amplifier": ["Power Amp", "Integrated Amp", "Others"],
+            "Others": []
+        },
+        "light": {
+            "Sharpy": [],
+            "PAR": [],
+            "Washer": [],
+            "Strobe": [],
+            "Blinder": [],
+            "Light Controller": ["DMX", "Software Based", "Others"],
+            "Others": []
+        },
+        "led": {
+            "Indoor P2.5": [],
+            "Outdoor P3.9": [],
+            "Controller": ["NovaStar", "Video Processor", "Others"],
+            "Others": []
+        },
+        "sfx": {
+            "Smoke Machine": [],
+            "Cold Pyro": [],
+            "Bubble Machine": [],
+            "Confetti": [],
+            "Others": []
+        }
+    };
+
+    function updateSubcategories() {
+        const category = document.getElementById('id_category').value;
+        const container = document.getElementById('cascading-container');
+        const subSelect = document.getElementById('id_subcategory');
+        const subWrapper = document.getElementById('subcategory-wrapper');
+        const typeWrapper = document.getElementById('type-wrapper');
+
+        // Reset
+        subSelect.innerHTML = '<option value="">Select Sub-Category</option>';
+        container.classList.add('hidden');
+        typeWrapper.classList.add('hidden');
+        document.getElementById('subcategory-input-container').innerHTML = `<select name="subcategory" id="id_subcategory" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" onchange="updateTypes()"><option value="">Select Sub-Category</option></select>`;
+
+        if (category === 'generator') {
+            container.classList.remove('hidden');
+            document.getElementById('subcategory-label').textContent = 'KVA Rating';
+            document.getElementById('subcategory-input-container').innerHTML = `<input type="text" name="subcategory" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" placeholder="Enter KVA (e.g. 62.5 KVA)" required>`;
+        } else if (category === 'others') {
+            container.classList.add('hidden');
+            document.getElementById('others-container').classList.remove('hidden');
+            // Change name of textarea to 'category' temporarily to override the choice? 
+            // Better: use JS on submit.
+        } else if (equipmentData[category]) {
+            container.classList.remove('hidden');
+            document.getElementById('subcategory-label').textContent = 'Sub-Category';
+            const subs = Object.keys(equipmentData[category]);
+            const subSelectNew = document.getElementById('id_subcategory');
+            subs.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.toLowerCase();
+                opt.textContent = s;
+                subSelectNew.appendChild(opt);
+            });
+            document.getElementById('others-container').classList.add('hidden');
+        }
+    }
+
+    function updateTypes() {
+        const category = document.getElementById('id_category').value;
+        const subcategoryRaw = document.getElementById('id_subcategory').value;
+        // Find the proper key casing
+        const subcategory = Object.keys(equipmentData[category] || {}).find(k => k.toLowerCase() === subcategoryRaw);
+
+        const typeWrapper = document.getElementById('type-wrapper');
+        const typeSelect = document.getElementById('id_sub_type');
+
+        typeSelect.innerHTML = '<option value="">Select Type</option>';
+        typeWrapper.classList.add('hidden');
+
+        if (subcategory === 'Others') {
+            document.getElementById('subcategory-input-container').innerHTML = `<input type="text" name="subcategory" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" placeholder="Specify others..." required>`;
+            return;
+        }
+
+        if (equipmentData[category] && equipmentData[category][subcategory] && equipmentData[category][subcategory].length > 0) {
+            typeWrapper.classList.remove('hidden');
+            equipmentData[category][subcategory].forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.toLowerCase();
+                opt.textContent = t;
+                typeSelect.appendChild(opt);
+            });
+        }
+    }
+
+    function checkTypeOthers() {
+        const typeVal = document.getElementById('id_sub_type').value;
+        if (typeVal === 'others') {
+            document.getElementById('type-input-container').innerHTML = `<input type="text" name="sub_type" class="block w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 text-on-surface" placeholder="Specify type..." required>`;
+        }
+    }
+
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('upload-placeholder');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}

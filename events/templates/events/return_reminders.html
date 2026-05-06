@@ -1,0 +1,46 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="px-margin pt-margin">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="font-display text-h1 text-on-surface">Return Reminders</h1>
+            <p class="font-body-md text-on-surface-variant">Track gear due to be returned in the next 12 hours.</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for reminder in reminders %}
+        <div class="glass-panel p-6 rounded-3xl border border-error/20 bg-error/5 shadow-lg animate-pulse">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-error/10 flex items-center justify-center text-error">
+                    <span class="material-symbols-outlined">assignment_return</span>
+                </div>
+                <div class="px-2 py-1 bg-error text-on-primary rounded-lg text-[10px] font-bold uppercase tracking-widest">
+                    Due Soon
+                </div>
+            </div>
+            <h3 class="font-h3 text-on-surface mb-1">{{ reminder.item.name }}</h3>
+            <p class="text-xs text-on-surface-variant mb-4">Customer: <span class="text-primary font-bold">{{ reminder.customer.username }}</span></p>
+            
+            <div class="flex flex-col gap-2 p-3 bg-surface/50 rounded-xl border border-outline-variant/30">
+                <div class="flex justify-between text-xs">
+                    <span class="text-on-surface-variant">Return Time:</span>
+                    <span class="font-mono font-bold text-error">{{ reminder.return_datetime|date:"H:i" }} today</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-on-surface-variant">Quantity:</span>
+                    <span class="font-mono font-bold">{{ reminder.quantity }} Units</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-20 glass-panel rounded-3xl border border-outline-variant/30 flex flex-col items-center justify-center text-on-surface-variant opacity-50">
+            <span class="material-symbols-outlined text-6xl mb-4">check_circle</span>
+            <h3 class="text-xl font-display">All Clear</h3>
+            <p class="text-sm">No items due for return in the next 12 hours.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

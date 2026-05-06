@@ -1,0 +1,97 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="px-margin pt-margin max-w-2xl mx-auto">
+    <div class="mb-8">
+        <h1 class="font-display text-h1 text-on-surface">Edit Profile</h1>
+        <p class="font-body-md text-on-surface-variant">Keep your personal information and avatar up to date.</p>
+    </div>
+
+    <div class="glass-panel p-8 rounded-3xl border border-outline-variant/30 shadow-2xl">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Avatar Section -->
+            <div class="flex flex-col items-center gap-4 mb-8">
+                <div class="relative group">
+                    {% if request.user.profile.avatar %}
+                    <img src="{{ request.user.profile.avatar.url }}" class="w-32 h-32 rounded-full border-4 border-primary/20 object-cover shadow-xl group-hover:opacity-75 transition-opacity">
+                    {% else %}
+                    <div class="w-32 h-32 rounded-full border-4 border-primary/20 bg-primary/10 flex items-center justify-center text-primary text-4xl font-bold shadow-xl">
+                        {{ request.user.username|make_list|first|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <span class="material-symbols-outlined text-white text-3xl">upload</span>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant mb-2 block">Profile Picture</label>
+                    <input type="file" name="avatar" class="block w-full text-sm text-on-surface-variant
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-primary/10 file:text-primary
+                        hover:file:bg-primary/20 transition-all">
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">First Name</label>
+                    <input type="text" name="first_name" value="{{ u_form.first_name.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+                </div>
+                <div class="space-y-2">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Last Name</label>
+                    <input type="text" name="last_name" value="{{ u_form.last_name.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Email Address</label>
+                <input type="email" name="email" value="{{ u_form.email.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+            </div>
+
+            {% if is_owner %}
+            <div class="pt-4 border-t border-outline-variant/30 mt-4">
+                <h3 class="font-h3 text-h3 text-on-surface mb-4">Business Details</h3>
+                
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Company Name</label>
+                        <input type="text" name="company_name" value="{{ o_form.company_name.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Phone Number</label>
+                            <input type="text" name="phone" value="{{ o_form.phone.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">District</label>
+                            <input type="text" name="district" value="{{ o_form.district.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">Location / Address</label>
+                            <input type="text" name="location" value="{{ o_form.location.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">State</label>
+                            <input type="text" name="state" value="{{ o_form.state.value }}" class="block w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="w-full py-4 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm hover:bg-surface-tint transition-all active:scale-95 shadow-lg shadow-primary/20 mt-8">
+                Save Profile Changes
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

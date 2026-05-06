@@ -1,0 +1,49 @@
+{% extends 'events/base.html' %}
+
+{% block body_class %}bg-background text-on-background font-body-md text-body-md flex min-h-screen items-center justify-center p-margin relative overflow-hidden{% endblock %}
+
+{% block content %}
+<!-- Decorative background elements -->
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
+
+<div class="w-full max-w-4xl relative z-10">
+    <div class="text-center mb-12 animate-fade-in-down">
+        <h1 class="font-display text-display text-on-surface mb-4">Choose Your Path</h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Select how you want to use StageKit Manager today.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <!-- Customer Card -->
+        <a href="{% url 'signup_customer' %}" class="glass-panel group p-8 rounded-3xl border border-white/20 shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
+            <div class="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                <span class="material-symbols-outlined text-primary group-hover:text-on-primary text-4xl transition-colors">person</span>
+            </div>
+            <h3 class="font-display text-h2 text-on-surface mb-3">Event Planner</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-6">I want to browse equipment, check availability, and book gear for my events.</p>
+            <div class="mt-auto inline-flex items-center gap-2 text-primary font-bold group-hover:translate-x-2 transition-transform">
+                Get Started <span class="material-symbols-outlined">arrow_forward</span>
+            </div>
+        </a>
+
+        <!-- Owner Card -->
+        <a href="{% url 'signup_owner' %}" class="glass-panel group p-8 rounded-3xl border border-white/20 shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
+            <div class="w-20 h-20 bg-secondary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-secondary group-hover:scale-110 transition-all duration-300">
+                <span class="material-symbols-outlined text-secondary group-hover:text-on-primary text-4xl transition-colors">inventory</span>
+            </div>
+            <h3 class="font-display text-h2 text-on-surface mb-3">Inventory Owner</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-6">I want to list my equipment, manage bookings, and grow my rental business.</p>
+            <div class="mt-auto inline-flex items-center gap-2 text-secondary font-bold group-hover:translate-x-2 transition-transform">
+                Start Listing <span class="material-symbols-outlined">arrow_forward</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="text-center animate-fade-in-up">
+        <p class="text-on-surface-variant font-body-md">
+            Already have an account? 
+            <a href="{% url 'login' %}" class="text-primary font-bold hover:underline underline-offset-4 ml-1">Log In Instead</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

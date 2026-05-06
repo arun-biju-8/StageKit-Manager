@@ -1,0 +1,148 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<!-- Catalog Header -->
+<div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
+    <div>
+        <h2 class="font-display text-h1 text-on-surface">Equipment Catalog</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Discover professional gear for your next event.</p>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+            <input type="text" class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-label-sm w-64" placeholder="Search equipment...">
+        </div>
+    </div>
+</div>
+
+<div class="px-margin pb-xl max-w-[1440px] mx-auto w-full">
+    <!-- Category Chips -->
+    <div class="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide" id="category-filters">
+        <button onclick="filterCategory('all', this)" class="category-btn px-4 py-2 rounded-full bg-primary text-on-primary font-label-sm text-sm whitespace-nowrap transition-all shadow-md">All Equipment</button>
+        <button onclick="filterCategory('sound', this)" class="category-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">Sound</button>
+        <button onclick="filterCategory('light', this)" class="category-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">Lighting</button>
+        <button onclick="filterCategory('led', this)" class="category-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">LED Walls</button>
+        <button onclick="filterCategory('sfx', this)" class="category-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">Special Effects</button>
+    </div>
+
+    <!-- Equipment Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter" id="equipment-grid">
+        {% for item in items %}
+        <div class="equipment-card glass-panel rounded-2xl overflow-hidden group flex flex-col border border-outline-variant/30 shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300" data-category="{{ item.category }}">
+            <!-- Image Area -->
+            <div class="aspect-video relative overflow-hidden bg-surface-container-high">
+                {% if item.images %}
+                <img src="{{ item.images.url }}" alt="{{ item.name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                {% else %}
+                <div class="w-full h-full flex flex-col items-center justify-center text-on-surface-variant/40">
+                    <span class="material-symbols-outlined text-4xl mb-1">inventory_2</span>
+                    <span class="text-xs uppercase tracking-widest font-bold">No Image</span>
+                </div>
+                {% endif %}
+                <!-- Price Badge -->
+                <div class="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-surface/90 backdrop-blur-md border border-white/20 shadow-lg">
+                    <p class="font-label-sm text-label-sm text-primary font-bold">₹{{ item.price_per_day }}<span class="text-[10px] text-on-surface-variant font-normal">/day</span></p>
+                </div>
+                <!-- Category Badge -->
+                <div class="absolute bottom-3 left-3 px-2 py-1 rounded bg-black/50 backdrop-blur-sm">
+                    <p class="text-[10px] text-white uppercase font-bold tracking-tighter">{{ item.get_category_display }}</p>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-5 flex-grow flex flex-col">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-h3 text-h3 text-on-surface line-clamp-1 group-hover:text-primary transition-colors">{{ item.name }}</h3>
+                </div>
+                
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[14px] text-primary">store</span>
+                    </div>
+                    <p class="text-xs text-on-surface-variant font-medium">
+                        {% if item.owner.company_name %}{{ item.owner.company_name }}{% else %}StageKit Partner{% endif %}{% if item.owner.district %}, {{ item.owner.district }}{% endif %}
+                    </p>
+                </div>
+
+                <p class="font-body-md text-sm text-on-surface-variant line-clamp-2 mb-6 h-10">
+                    {{ item.description|default:"No description provided for this professional equipment." }}
+                </p>
+
+                <!-- Footer Stats & Button -->
+                <div class="mt-auto pt-4 border-t border-outline-variant/30 flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-on-surface-variant uppercase font-bold">Available</span>
+                        <span class="text-sm font-mono font-bold text-on-surface">{{ item.quantity }} Units</span>
+                    </div>
+                    <a href="{% url 'book_item' item.id %}" class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-label-sm text-xs shadow-md shadow-primary/20 hover:bg-surface-tint active:scale-95 transition-all">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-20 flex flex-col items-center justify-center text-on-surface-variant opacity-50">
+            <span class="material-symbols-outlined text-6xl mb-4">search_off</span>
+            <h3 class="text-xl font-display">No Equipment Found</h3>
+            <p class="text-sm">We couldn't find any equipment matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Empty State (Hidden by default) -->
+    <div id="empty-state" class="hidden py-20 flex flex-col items-center justify-center text-on-surface-variant opacity-50">
+        <span class="material-symbols-outlined text-6xl mb-4">search_off</span>
+        <h3 class="text-xl font-display">No Equipment Found</h3>
+        <p class="text-sm">No items available in this category yet.</p>
+    </div>
+</div>
+
+<script>
+function filterCategory(category, btn) {
+    const cards = document.querySelectorAll('.equipment-card');
+    const buttons = document.querySelectorAll('.category-btn');
+    const emptyState = document.getElementById('empty-state');
+    const grid = document.getElementById('equipment-grid');
+    let hasItems = false;
+
+    // Update button styles
+    buttons.forEach(b => {
+        b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
+        b.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+    });
+    btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
+    btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+
+    // Filter cards
+    cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+            card.classList.remove('hidden');
+            card.classList.add('animate-fade-in');
+            hasItems = true;
+        } else {
+            card.classList.add('hidden');
+            card.classList.remove('animate-fade-in');
+        }
+    });
+
+    // Show/Hide empty state
+    if (!hasItems) {
+        emptyState.classList.remove('hidden');
+        grid.classList.add('hidden');
+    } else {
+        emptyState.classList.add('hidden');
+        grid.classList.remove('hidden');
+    }
+}
+</script>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+</style>
+{% endblock %}

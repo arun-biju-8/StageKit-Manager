@@ -1,0 +1,56 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="px-margin pt-margin">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="font-display text-h1 text-on-surface">Booking Requests</h1>
+            <p class="font-body-md text-on-surface-variant">Review and manage incoming gear requests.</p>
+        </div>
+    </div>
+
+    <div class="glass-panel rounded-3xl overflow-hidden border border-outline-variant/30 shadow-xl">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-container-high/50 text-on-surface-variant font-label-sm text-xs uppercase tracking-widest">
+                    <th class="px-6 py-4">Item</th>
+                    <th class="px-6 py-4">Customer</th>
+                    <th class="px-6 py-4 text-center">Quantity</th>
+                    <th class="px-6 py-4">Event Date</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10">
+                {% for req in requests %}
+                <tr class="table-row-hover">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                <span class="material-symbols-outlined">inventory_2</span>
+                            </div>
+                            <span class="font-bold text-on-surface">{{ req.item.name }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-on-surface-variant">{{ req.customer.username }}</td>
+                    <td class="px-6 py-4 text-center font-mono">{{ req.quantity }}</td>
+                    <td class="px-6 py-4 text-on-surface-variant">{{ req.start_date }} - {{ req.end_date }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2">
+                            <a href="{% url 'manage_booking' req.id 'approve' %}" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-sm text-xs hover:bg-surface-tint transition-all active:scale-95">Approve</a>
+                            <a href="{% url 'manage_booking' req.id 'reject' %}" class="px-4 py-2 bg-error-container text-on-error-container rounded-lg font-label-sm text-xs hover:bg-error/10 transition-all active:scale-95">Reject</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-20 text-center text-on-surface-variant opacity-50">
+                        <span class="material-symbols-outlined text-4xl mb-2">notifications_off</span>
+                        <p>No pending booking requests.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

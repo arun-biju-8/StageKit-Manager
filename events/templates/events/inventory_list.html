@@ -1,0 +1,144 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
+    <div>
+        <h2 class="font-display text-h1 text-on-surface">My Inventory</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage and track your equipment listings.</p>
+    </div>
+    <div class="flex items-center gap-4">
+        <a href="{% url 'add_inventory' %}" class="bg-primary text-on-primary font-label-sm text-label-sm py-2 px-4 rounded-xl hover:bg-surface-tint transition-colors duration-200 shadow-md shadow-primary/20 flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+            Add New Item
+        </a>
+    </div>
+</div>
+
+<div class="px-margin pb-xl max-w-[1440px] mx-auto w-full">
+    {% if messages %}
+    <div class="mb-6 space-y-2">
+        {% for message in messages %}
+        <div class="p-4 rounded-xl bg-surface-container-high border border-outline-variant text-sm flex items-center gap-3 animate-fade-in">
+            <span class="material-symbols-outlined text-primary">info</span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Category Filters -->
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide" id="inventory-filters">
+        <button onclick="filterInventory('all', this)" class="inventory-filter-btn px-4 py-2 rounded-full bg-primary text-on-primary font-label-sm text-sm whitespace-nowrap transition-all shadow-md">All Items</button>
+        <button onclick="filterInventory('sound', this)" class="inventory-filter-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">Sound</button>
+        <button onclick="filterInventory('light', this)" class="inventory-filter-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">Lighting</button>
+        <button onclick="filterInventory('led', this)" class="inventory-filter-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">LED Walls</button>
+        <button onclick="filterInventory('sfx', this)" class="inventory-filter-btn px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-sm whitespace-nowrap hover:bg-surface-container-highest transition-all">Special Effects</button>
+    </div>
+
+    <div class="glass-panel rounded-xl flex flex-col border border-outline-variant/30 shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Equipment Name</th>
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Category</th>
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-center">Quantity</th>
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Price/Day</th>
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm" id="inventory-table-body">
+                    {% for item in items %}
+                    <tr class="inventory-row hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10" data-category="{{ item.category }}">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary overflow-hidden border border-outline-variant/50">
+                                    {% if item.images %}
+                                        <img src="{{ item.images.url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <span class="material-symbols-outlined">inventory_2</span>
+                                    {% endif %}
+                                </div>
+                                <div class="font-medium text-on-surface">{{ item.name }}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-on-surface-variant">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container/10 text-secondary border border-secondary-container/20">
+                                {{ item.get_category_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-on-surface text-center font-mono">{{ item.quantity }}</td>
+                        <td class="px-6 py-4 text-on-surface-variant font-bold">₹{{ item.price_per_day }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2">
+                                <a href="{% url 'edit_inventory' item.id %}" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors" title="Edit">
+                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                </a>
+                                <form method="POST" action="{% url 'delete_inventory' item.id %}" onsubmit="return confirm('Delete {{ item.name }}?');" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/5 rounded-lg transition-colors" title="Delete">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr id="initial-empty-row">
+                        <td colspan="5" class="px-6 py-12 text-center text-on-surface-variant">
+                            <div class="flex flex-col items-center justify-center">
+                                <span class="material-symbols-outlined text-4xl mb-2 opacity-30">inventory</span>
+                                <p class="text-base font-medium">Your inventory is empty</p>
+                                <a href="{% url 'add_inventory' %}" class="mt-4 text-primary font-label-sm text-label-sm hover:underline">Add your first item</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr id="no-match-row" class="hidden">
+                        <td colspan="5" class="px-6 py-12 text-center text-on-surface-variant opacity-50">
+                            <span class="material-symbols-outlined text-4xl mb-2">search_off</span>
+                            <p>No items found in this category.</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterInventory(category, btn) {
+    const rows = document.querySelectorAll('.inventory-row');
+    const buttons = document.querySelectorAll('.inventory-filter-btn');
+    const noMatchRow = document.getElementById('no-match-row');
+    const initialEmpty = document.getElementById('initial-empty-row');
+    let hasItems = false;
+
+    // Update button styles
+    buttons.forEach(b => {
+        b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
+        b.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+    });
+    btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
+    btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+
+    // Filter rows
+    rows.forEach(row => {
+        if (category === 'all' || row.dataset.category === category) {
+            row.classList.remove('hidden');
+            hasItems = true;
+        } else {
+            row.classList.add('hidden');
+        }
+    });
+
+    // Show/Hide no match row
+    if (!hasItems && !initialEmpty) {
+        noMatchRow.classList.remove('hidden');
+    } else {
+        noMatchRow.classList.add('hidden');
+    }
+}
+</script>
+{% endblock %}

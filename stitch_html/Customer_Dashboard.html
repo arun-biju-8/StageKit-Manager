@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageKit Manager - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e4e1ee",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#4f46e5",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "outline": "#777587",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fcf8ff",
+                        "tertiary-container": "#a44100",
+                        "surface-tint": "#4d44e3",
+                        "surface-container": "#f0ecf9",
+                        "inverse-surface": "#302f39",
+                        "on-secondary-container": "#231791",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f5f2ff",
+                        "secondary-container": "#8f8bff",
+                        "secondary-fixed": "#e2dfff",
+                        "inverse-on-surface": "#f3effc",
+                        "error": "#ba1a1a",
+                        "primary": "#3525cd",
+                        "surface-container-highest": "#e4e1ee",
+                        "surface-dim": "#dcd8e5",
+                        "on-surface": "#1b1b24",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-tertiary-fixed": "#351000",
+                        "inverse-primary": "#c3c0ff",
+                        "on-primary-fixed": "#0f0069",
+                        "background": "#fcf8ff",
+                        "primary-fixed": "#e2dfff",
+                        "tertiary": "#7e3000",
+                        "surface-container-high": "#eae6f4",
+                        "secondary": "#544fc0",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "on-surface-variant": "#464555",
+                        "surface": "#fcf8ff",
+                        "tertiary-fixed": "#ffdbcc",
+                        "on-background": "#1b1b24",
+                        "on-secondary-fixed": "#0f0069",
+                        "outline-variant": "#c7c4d8",
+                        "on-secondary-fixed-variant": "#3b35a7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "xl": "80px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "display": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "h3": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h2": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "h1": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="sticky top-0 z-50 flex justify-between items-center px-margin h-20 w-full bg-white/70 dark:bg-inverse-surface/40 backdrop-blur-xl border-b border-white/20 dark:border-white/10 shadow-sm shadow-primary/5 shadow-lg shadow-primary/5">
+<div class="flex items-center gap-6">
+<span class="font-display text-h3 font-bold text-primary dark:text-primary-fixed-dim tracking-tight">StageKit Manager</span>
+<!-- Search Bar (on_left) -->
+<div class="hidden md:flex relative items-center ml-4">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant" style="font-size: 20px;">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 transition-all duration-300" placeholder="Search inventory..." type="text"/>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="hidden md:flex items-center gap-8">
+<li><a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1 Active: scale-95 transition-transform duration-200 cubic-bezier(0.4, 0, 0.2, 1)" href="#">Inventory</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 hover:bg-surface-container-high/50 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Bookings</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 hover:bg-surface-container-high/50 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Clients</a></li>
+</ul>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-full transition-all duration-300">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-full transition-all duration-300">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="User profile" class="w-10 h-10 rounded-full border-2 border-surface-container-highest cursor-pointer hover:border-primary transition-colors duration-300" data-alt="A professional headshot of a person, well-lit with soft natural light, conveying approachability and competence. The background is slightly blurred, keeping the focus on the face. This fits a modern SaaS platform aesthetic with clean, bright visuals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGCyZvJ6ZFZCMrcb9InnhvmvrejlFbXfhiKgq45twXrb8gXWGymN7idXFOymar1IlsaJz2kHrYjGmGqKNH6UTK_GIbfMbGRSCAhcgVj4k3eeJy6OBrEhYG-BSqv1jwEHV9z1IjHqIFcrnzM3N8AAEil4rofDEtLq_3aWmPaqB8kr5rq6fEHf6MtQzTN5iV9aC4PhBKCninFXjNT661i4SEfGzc1-OuwSvhi-xA0QuWnZUmqCCZrMQuHjDT-gnQYYB6G9gCxlQ392lw"/>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-[1440px] mx-auto px-margin py-lg flex flex-col gap-lg">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+<div>
+<h1 class="font-h1 text-h1 text-on-surface mb-2">Equipment Inventory</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Browse and book high-end stage production equipment. All items are maintained to Luminous Precision standards.</p>
+</div>
+<!-- Filters -->
+<div class="flex flex-wrap gap-sm">
+<button class="px-4 py-2 bg-surface-container-low border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface hover:border-primary hover:text-primary transition-all duration-200 shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">filter_list</span> Filters
+                </button>
+<div class="flex bg-surface-container-low rounded-full p-1 border border-outline-variant shadow-sm">
+<button class="px-4 py-1.5 bg-white rounded-full shadow-sm font-label-sm text-label-sm text-primary">All</button>
+<button class="px-4 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors">Audio</button>
+<button class="px-4 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors">Lighting</button>
+<button class="px-4 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors">Rigging</button>
+</div>
+</div>
+</header>
+<!-- Bento Grid / Equipment Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-white/20 shadow-md shadow-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 overflow-hidden flex flex-col group relative">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-variant/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+<div class="relative h-48 w-full overflow-hidden">
+<img alt="Professional Audio Mixer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A sleek, high-end professional audio mixing console in a dimly lit studio environment. The console features numerous glowing buttons, faders, and digital displays, creating a tech-forward, sophisticated aesthetic. The lighting highlights the precision engineering of the equipment, fitting perfectly into a premium stage production theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1SzumRVTxBk5gQ20uJ9h44x-u44OtM9H2QdOy_wNG3tISyLG6EJCH3q-fQP-XeQNcEWdVoUxJXz1vZIBD3h-Ys7TqZIkjfnMk418qwTyBePxOvxsXXZ7NW7gI3k_c2ZSepG8rgOZcHgL5LEj92CErc6ndXrVfULAuR3x6SHkNAEPhfHNO6_B3HT3mdXRHuEQ_x-gOn-ILp09kRI6Jp9mDGfvi2NsdtcgdCr3DOgjDM3lYujoQ9qjFWh5qgG5PYIWBEJ6yw6ekwbrF"/>
+<div class="absolute top-sm right-sm flex gap-2">
+<span class="px-3 py-1 bg-white/70 backdrop-blur-md rounded-full font-label-sm text-label-sm text-on-surface shadow-sm border border-white/50">Audio</span>
+<div class="w-2.5 h-2.5 rounded-full bg-primary mt-1.5 animate-pulse" title="Available"></div>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1 gap-4 z-10 bg-white/50 backdrop-blur-sm">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface mb-1">Midas Pro X</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Flagship digital console with 168 input channels and 99 mix buses. Industry standard for large scale tours.</p>
+</div>
+<div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Daily Rate</span>
+<span class="font-h2 text-h2 text-primary">$450</span>
+</div>
+<button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:bg-surface-tint shadow-sm hover:shadow-md hover:scale-95 transition-all duration-200">Book Now</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-white/20 shadow-md shadow-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 overflow-hidden flex flex-col group relative">
+<div class="relative h-48 w-full overflow-hidden">
+<img alt="Moving Head Lights" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A row of high-powered, professional moving head stage lights rigged on a truss. They are projecting vibrant, colorful beams of light against a dark, smoky background, illustrating dynamic stage production capabilities. The scene conveys energy, technical precision, and a premium live event atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe3g9PdohNiIglS21bBKfMfupk1IAs3EP72s438jLBBKdfGRt2fIvBzHhuKrC0AUov00iqS-fQUqA9PmWTp6qe97KrJS2hjze0-ZopEF-vOEtpvU-xbA9khJNa0m25yPftb1Wf8oHqtX2QDjcrQnzbRrE07CuNzOF-gn5Fz1kjlbDTYTay1H0kQREheIr0Q2nLLiA2b_fH8PPDbMD3FbJJDtZ4GECfMxFzeJKfypIso77nK-mlhQj7Ti3apy71PWBTWolmUQP0NqU2"/>
+<div class="absolute top-sm right-sm flex gap-2">
+<span class="px-3 py-1 bg-white/70 backdrop-blur-md rounded-full font-label-sm text-label-sm text-on-surface shadow-sm border border-white/50">Lighting</span>
+<div class="w-2.5 h-2.5 rounded-full bg-primary mt-1.5 animate-pulse" title="Available"></div>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1 gap-4 z-10 bg-white/50 backdrop-blur-sm">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface mb-1">Robe MegaPointe</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Versatile moving light fixture offering wash, spot, beam, and effects in one unit. Ultra-bright output.</p>
+</div>
+<div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Daily Rate</span>
+<span class="font-h2 text-h2 text-primary">$120</span>
+</div>
+<button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:bg-surface-tint shadow-sm hover:shadow-md hover:scale-95 transition-all duration-200">Book Now</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl border border-white/20 shadow-md shadow-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 overflow-hidden flex flex-col group relative">
+<div class="relative h-48 w-full overflow-hidden">
+<img alt="Line Array Speakers" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A massive, curved line array speaker system suspended high above a concert stage. The speakers are matte black, imposing, and technically complex, set against a blurred background of a large arena. The lighting highlights the geometric precision of the rigging, emphasizing high-fidelity sound reinforcement." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3E0qSH_NmrdgmEYfXta2RUcYHER94mlCpqhfGiJ2fECqX0CNLVTGNabtHtCDermQIVWY3sN1LK3Cpqq2-kxropfcCRhf3Q1ZWmEvKB6vKoTmvy1Az3iOvk5LKeVbhhy6rVOvRknCwNl-RfGGN7Gx5YSRjGhNGBT0H9tfWRnq52jyM3s_sORWKe4Aq3CvlvYhyvhTnkQUc5pKJZuOObmzwAm3okAKmroRFFw5KVGZqO5y3Q4t1oJv1x613d6_F5je5-kYjeTfj-e-H"/>
+<div class="absolute top-sm right-sm flex gap-2">
+<span class="px-3 py-1 bg-white/70 backdrop-blur-md rounded-full font-label-sm text-label-sm text-on-surface shadow-sm border border-white/50">Audio</span>
+<div class="w-2.5 h-2.5 rounded-full bg-error mt-1.5" title="Out of Stock"></div>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1 gap-4 z-10 bg-white/50 backdrop-blur-sm">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface mb-1">L-Acoustics K2</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Full range line source element. Delivers pristine audio quality for large arenas and outdoor festivals.</p>
+</div>
+<div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Daily Rate</span>
+<span class="font-h2 text-h2 text-outline-variant">$250</span>
+</div>
+<button class="px-6 py-2 bg-surface-variant text-on-surface-variant rounded-lg font-label-sm text-label-sm cursor-not-allowed shadow-sm">Waitlist</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl border border-white/20 shadow-md shadow-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 overflow-hidden flex flex-col group relative">
+<div class="relative h-48 w-full overflow-hidden">
+<img alt="Stage Rigging Truss" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="Heavy-duty aluminum stage rigging truss segments stacked neatly in a warehouse. The metallic surfaces reflect a cool, industrial light, emphasizing strength and structural integrity. The scene feels organized, precise, and essential to behind-the-scenes event logistics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhdN5xLYP0CVlOXedfhjViuwZrYRWKOyQ805kZpAZcB0AyQ62B70Fz3fk1XRvkXg9kvyD4CQuvX8KT78TzzQURf48iy0PuceuunWYjzR3T2_62po7sCroLZfmST4CJR4TnGsKQXDzm-oyZ3IuQPQ05QfXv9qxfvqj_6a_r6mUXGzy-fJqr4PHFzV4Kcd-tR8XxvyKhU1qnbnHcCZZsHEb53ve8QUz611oPnvy2irm6vWM-JD12DreRsu2A8MegYYGpZXo61zfB_Rvd"/>
+<div class="absolute top-sm right-sm flex gap-2">
+<span class="px-3 py-1 bg-white/70 backdrop-blur-md rounded-full font-label-sm text-label-sm text-on-surface shadow-sm border border-white/50">Rigging</span>
+<div class="w-2.5 h-2.5 rounded-full bg-primary mt-1.5 animate-pulse" title="Available"></div>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1 gap-4 z-10 bg-white/50 backdrop-blur-sm">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface mb-1">Prolyte H30V Truss</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Standard multi-purpose truss. Lightweight yet strong, ideal for rental, touring, and exhibition markets.</p>
+</div>
+<div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Daily Rate</span>
+<span class="font-h2 text-h2 text-primary">$15/m</span>
+</div>
+<button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:bg-surface-tint shadow-sm hover:shadow-md hover:scale-95 transition-all duration-200">Book Now</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="w-full py-8 px-margin flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto bg-surface-dim dark:bg-inverse-surface border-t border-outline-variant mt-auto">
+<span class="font-display text-body-lg font-bold text-on-surface mb-4 md:mb-0">StageKit Manager</span>
+<span class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed text-center md:text-left mb-4 md:mb-0">© 2024 StageKit Manager. Luminous Precision in Logistics.</span>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Help Center</a>
+</div>
+</footer>
+</body></html>

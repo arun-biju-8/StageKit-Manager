@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Management - StageKit Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e4e1ee",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#4f46e5",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "outline": "#777587",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fcf8ff",
+                        "tertiary-container": "#a44100",
+                        "surface-tint": "#4d44e3",
+                        "surface-container": "#f0ecf9",
+                        "inverse-surface": "#302f39",
+                        "on-secondary-container": "#231791",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f5f2ff",
+                        "secondary-container": "#8f8bff",
+                        "secondary-fixed": "#e2dfff",
+                        "inverse-on-surface": "#f3effc",
+                        "error": "#ba1a1a",
+                        "primary": "#3525cd",
+                        "surface-container-highest": "#e4e1ee",
+                        "surface-dim": "#dcd8e5",
+                        "on-surface": "#1b1b24",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-tertiary-fixed": "#351000",
+                        "inverse-primary": "#c3c0ff",
+                        "on-primary-fixed": "#0f0069",
+                        "background": "#fcf8ff",
+                        "primary-fixed": "#e2dfff",
+                        "tertiary": "#7e3000",
+                        "surface-container-high": "#eae6f4",
+                        "secondary": "#544fc0",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "on-surface-variant": "#464555",
+                        "surface": "#fcf8ff",
+                        "tertiary-fixed": "#ffdbcc",
+                        "on-background": "#1b1b24",
+                        "on-secondary-fixed": "#0f0069",
+                        "outline-variant": "#c7c4d8",
+                        "on-secondary-fixed-variant": "#3b35a7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "xl": "80px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "display": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "h3": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h2": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "h1": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .glass-panel {
+                @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-lg shadow-primary/5;
+            }
+            .glass-chip {
+                @apply bg-surface-container-highest/50 backdrop-blur-md border border-white/30;
+            }
+            .transition-smooth {
+                @apply transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row">
+<!-- Mobile TopNavBar -->
+<header class="md:hidden sticky top-0 z-50 flex justify-between items-center px-margin h-20 w-full bg-white/70 dark:bg-inverse-surface/40 backdrop-blur-xl border-b border-white/20 dark:border-white/10 shadow-sm shadow-primary/5">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl">menu</span>
+<span class="font-display text-h3 font-bold text-primary tracking-tight">StageKit Manager</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200">notifications</span>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a person, serving as a user avatar placeholder. The image is clear, well-lit, and suitable for a minimalist SaaS dashboard interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAMtFVi3jqBjLOeYExz4aASKxn3cnlWpaxc_X-kV1uoyaAXKxrEUp-FQc5qetewA3sG2lXXI46NbZNU7hvmDKFZHltuQjDYVoZ146ByzWx0LNcLBSTNB2j4uo1869nJSgKYBfKRwk9oH5mY5SbNFndRd3MeWm181fTmW0rlrgpUsCzpq_aistLuTuCylKIHjJe4R3Tj-SUza1Mv51cgSzyku0wbiH40hAzu52FwAWxRQ5iiLenDrHg8tF4LqWRtERbDAt8u18v6Abl"/>
+</div>
+</header>
+<!-- SideNavBar (Web) -->
+<aside class="hidden md:flex flex-col p-6 gap-y-2 h-screen w-[280px] fixed left-0 top-0 bg-surface-container-low/80 dark:bg-inverse-surface/60 backdrop-blur-2xl border-r border-white/20 dark:border-white/10 shadow-xl shadow-primary/10 z-40">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">scene</span>
+</div>
+<div>
+<h1 class="font-display text-h2 font-bold text-primary">StageKit Pro</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Backstage Management</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-xl font-semibold shadow-inner font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+                Inventory
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Bookings
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">group</span>
+                Team
+            </a>
+</nav>
+<div class="mt-auto flex flex-col gap-2 pt-4 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+<div class="mt-4 flex items-center gap-3 px-2 py-3 bg-surface-container-highest rounded-xl border border-white/50 shadow-sm shadow-primary/5">
+<img alt="StageKit Admin" class="w-10 h-10 rounded-lg object-cover" data-alt="A professional headshot of an administrator for a SaaS platform. The image should be clean, high-resolution, and perfectly fit a small avatar square. The lighting is soft and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDfhaKZeKO7JsmRzK92ScmFIf9AZ_hqH997ej1EsHHFErXYxsAWzD-Kf2sdKHCXKXeCnU2UwDzXFE05FhwOZ2Uxe_KtGqCIlE1UQ_y2-8LN5xnizM6blAgSsYMiOR7e-BDgT-J4MLHO2yk1EKSpAnLsfAeDroWMT0ZvudiY7W8f_PSnsaqnuPn4KLIZBn52gRj4No8r4cqgogF7fSTI7NkdfC3zfajlAqljJc7HRSdE2Y-RPnPtT7gRzuQf1FFiqWijkzbAmXgg1CW"/>
+<div class="flex-1 min-w-0">
+<p class="font-label-sm text-label-sm font-semibold text-on-surface truncate">Admin User</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate text-xs">StageKit Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col min-w-0 md:pl-[280px]">
+<!-- Top App Bar (Web Actions only, Nav is in sidebar) -->
+<div class="hidden md:flex sticky top-0 z-30 h-20 px-margin items-center justify-between bg-background/80 backdrop-blur-xl border-b border-surface-variant/50">
+<div class="flex-1 max-w-2xl">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-primary/50 text-on-surface font-body-md text-body-md shadow-inner transition-shadow placeholder:text-on-surface-variant/70" placeholder="Search inventory..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4 ml-8">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container hover:text-primary transition-smooth">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container hover:text-primary transition-smooth">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+<div class="flex-1 p-margin flex flex-col gap-gutter max-w-7xl mx-auto w-full">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+<div>
+<h2 class="font-h1 text-h1 text-on-surface">Inventory Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-2xl">Manage your stage equipment, track availability, and update details across all warehouses.</p>
+</div>
+<!-- Desktop Add Button (Replaces FAB on larger screens for better UX, though FAB is requested, standard SaaS practice puts it here too) -->
+<button class="hidden md:flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[0.98] transition-smooth group">
+<span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-300">add</span>
+                    Add Equipment
+                </button>
+</div>
+<!-- Filters & Views -->
+<div class="flex flex-col sm:flex-row justify-between items-center gap-4 glass-panel rounded-2xl p-4">
+<div class="flex flex-wrap gap-2 w-full sm:w-auto">
+<button class="px-4 py-2 bg-primary-container text-on-primary-container rounded-lg font-label-sm text-label-sm font-medium border border-primary/20">All Items</button>
+<button class="px-4 py-2 glass-chip text-on-surface-variant hover:text-on-surface rounded-lg font-label-sm text-label-sm transition-colors">Audio</button>
+<button class="px-4 py-2 glass-chip text-on-surface-variant hover:text-on-surface rounded-lg font-label-sm text-label-sm transition-colors">Lighting</button>
+<button class="px-4 py-2 glass-chip text-on-surface-variant hover:text-on-surface rounded-lg font-label-sm text-label-sm transition-colors">Rigging</button>
+</div>
+<div class="flex items-center gap-2 self-end sm:self-auto">
+<button class="p-2 rounded-lg bg-surface-container-high text-primary"><span class="material-symbols-outlined">grid_view</span></button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined">list</span></button>
+<div class="w-px h-6 bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
+                    </button>
+</div>
+</div>
+<!-- Inventory Grid (Hybrid layout) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="glass-panel rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-smooth">
+<div class="relative h-48 bg-surface-container-high w-full overflow-hidden">
+<img alt="Studio Microphone" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A high-end professional studio microphone on a stand, illuminated by soft, cinematic lighting against a dark studio background. The image should convey premium audio equipment quality, fitting a luxury SaaS inventory platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9o6uULZhpDcGWV4BA4H_A1hx1qc_WlGMvw9qkT9rElYk-ueoUfLl2uM5UnU6DxW7o9G84j3_G_-xQrGsz8vGyHSJYHyXqHW53eXWi2dlNaqepOtgo_GMwbj4h1fZEE7brmfAJlrOnuwK_mY5wfmJCWHaaEV1hC0O0SltA1Z3ZAgGWoHFTERqZkO0dmGoGgUz_wCKrpzPni5ZuFJumtoTDNo4C5hlDIGiu2q4HdV_KSYRjDOWp8D3r-Iwt2DIPMMHMpZrIS93uxpPk"/>
+<div class="absolute top-3 left-3 flex gap-2">
+<span class="px-2.5 py-1 bg-surface-lowest/90 backdrop-blur text-primary text-xs font-semibold rounded-md flex items-center gap-1 shadow-sm">
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div> Available
+                            </span>
+</div>
+<div class="absolute top-3 right-3">
+<button class="w-8 h-8 rounded-full bg-surface-lowest/80 backdrop-blur flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface line-clamp-1">Shure SM7B</h3>
+<p class="font-body-md text-sm text-on-surface-variant mt-0.5">Vocal Microphone</p>
+</div>
+</div>
+<div class="mt-4 flex flex-col gap-2">
+<div class="flex justify-between items-center text-sm">
+<span class="text-outline">SKU</span>
+<span class="font-mono text-on-surface">MIC-SHU-001</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-outline">Condition</span>
+<span class="text-on-surface">Excellent</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-outline">Location</span>
+<span class="text-on-surface">Main Warehouse - A12</span>
+</div>
+</div>
+<div class="mt-auto pt-5 flex gap-2">
+<button class="flex-1 py-2 rounded-lg border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary font-label-sm text-label-sm transition-colors flex justify-center items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                            </button>
+<button class="flex-none p-2 rounded-lg border border-outline-variant text-on-surface-variant hover:border-error hover:text-error hover:bg-error-container/30 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-panel rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-smooth">
+<div class="relative h-48 bg-surface-container-high w-full overflow-hidden">
+<img alt="Stage Lighting" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Professional stage moving head light fixture in a warehouse setting. The lighting highlights the industrial design and lens of the equipment, creating a moody, technical aesthetic suitable for an event logistics platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLYFhvakFRVnjrtvmdmOzl6ymbTKoUX_SoU9Ou5rR5I00f5KN7gIBgjxMK_I-NrIklgNkLgXTvddD5LrjSnnPU4R-mM0YCSnSrqYycfnIvRcvvPY9uLkiWtigmpM-HQiZgs2qOvL2eul_Gv60JYZHpG-_wukjdx_eObw1nUYWnI5Cbyraz48p1eCiAvAuQZ9_0Ub09j9Ew029bdYsXshm5qEPkyGWIesR6vMf6fgMKvPVRszHF-tV89QtzaI1WHqy7AVCQca8DoQqr"/>
+<div class="absolute top-3 left-3 flex gap-2">
+<span class="px-2.5 py-1 bg-surface-lowest/90 backdrop-blur text-tertiary text-xs font-semibold rounded-md flex items-center gap-1 shadow-sm">
+<div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div> Out on Rent
+                            </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface line-clamp-1">Martin MAC Aura</h3>
+<p class="font-body-md text-sm text-on-surface-variant mt-0.5">LED Wash Moving Head</p>
+</div>
+</div>
+<div class="mt-4 flex flex-col gap-2">
+<div class="flex justify-between items-center text-sm">
+<span class="text-outline">SKU</span>
+<span class="font-mono text-on-surface">LGT-MAR-045</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-outline">Return Date</span>
+<span class="text-on-surface font-medium">Oct 24, 2024</span>
+</div>
+</div>
+<div class="mt-auto pt-5 flex gap-2">
+<button class="flex-1 py-2 rounded-lg border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary font-label-sm text-label-sm transition-colors flex justify-center items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                            </button>
+<button class="flex-none p-2 rounded-lg border border-outline-variant text-on-surface-variant hover:border-error hover:text-error hover:bg-error-container/30 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Add New Placeholder Card -->
+<button class="glass-panel rounded-2xl flex flex-col items-center justify-center min-h-[350px] border-dashed border-2 border-outline-variant hover:border-primary hover:bg-surface-container-low transition-smooth group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container group-hover:text-primary transition-colors mb-4">
+<span class="material-symbols-outlined text-3xl">add</span>
+</div>
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-primary transition-colors">Add Equipment</h3>
+<p class="font-body-md text-sm text-on-surface-variant mt-2 text-center px-6">Register a new item to your inventory catalog.</p>
+</button>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full py-8 px-margin flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto border-t border-outline-variant bg-surface-dim dark:bg-inverse-surface mt-auto">
+<div class="font-display text-body-lg font-bold text-on-surface mb-4 md:mb-0">
+                StageKit Manager
+            </div>
+<p class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed mb-4 md:mb-0 text-center">
+                © 2024 StageKit Manager. Luminous Precision in Logistics.
+            </p>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Help Center</a>
+</div>
+</footer>
+</main>
+<!-- Floating Action Button (Mobile Primary) -->
+<button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+</body></html>

@@ -1,0 +1,229 @@
+{% extends 'events/base.html' %}
+
+{% block body_class %}bg-surface text-on-surface font-body-md min-h-screen flex flex-col items-center justify-center p-4 relative{% endblock %}
+
+{% block content %}
+<style>
+    .floating-input:focus-within label,
+    .floating-input input:not(:placeholder-shown) + label {
+        transform: translateY(-100%) scale(0.85);
+        top: 14px;
+        left: 12px;
+        background-color: #ffffff;
+        padding: 0 8px;
+        color: theme('colors.primary');
+        z-index: 20;
+    }
+
+    .error-border {
+        border-color: theme('colors.error') !important;
+    }
+
+    .valid-border {
+        border-color: #10b981 !important; /* emerald-500 */
+    }
+
+    #password-rules li {
+        list-style: none;
+        font-size: 13px;
+        transition: color 0.2s;
+    }
+</style>
+
+<div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+    <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-container/20 blur-[100px]"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-secondary-container/10 blur-[120px]"></div>
+</div>
+
+<div class="w-full max-w-[500px] z-10 my-8">
+    <div class="glass-panel rounded-[24px] p-lg w-full transform transition-all duration-300 shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-surface-container shadow-sm mb-4">
+                <span class="material-symbols-outlined text-h1 text-primary" style="font-variation-settings: 'FILL' 1;">person_add</span>
+            </div>
+            <h1 class="font-h1 text-h1 text-on-surface mb-2 tracking-tight">Customer Signup</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Join StageKit to rent the best equipment.</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="bg-error-container text-on-error-container p-4 rounded-xl text-sm mb-6 flex flex-col gap-1 border border-error/20 shadow-lg">
+            <div class="flex items-center gap-2 font-bold mb-1 text-error">
+                <span class="material-symbols-outlined text-[20px]">error</span>
+                Please correct the following errors:
+            </div>
+            <ul class="list-disc list-inside ml-7 text-on-error-container/80">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li><span class="font-medium text-on-error-container">{{ field|title }}:</span> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="POST" id="signupForm" class="space-y-5">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="relative floating-input bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200">
+                    <input type="text" name="first_name" class="block w-full px-4 pt-6 pb-2 text-on-surface bg-transparent border-0 focus:ring-0 peer placeholder-transparent" id="id_first_name" placeholder=" " required>
+                    <label for="id_first_name" class="absolute text-on-surface-variant font-body-md text-body-md duration-200 transform -translate-y-1/2 top-1/2 left-4 z-10 origin-[0] peer-focus:text-primary pointer-events-none">First Name</label>
+                </div>
+
+                <div class="relative floating-input bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200">
+                    <input type="text" name="last_name" class="block w-full px-4 pt-6 pb-2 text-on-surface bg-transparent border-0 focus:ring-0 peer placeholder-transparent" id="id_last_name" placeholder=" " required>
+                    <label for="id_last_name" class="absolute text-on-surface-variant font-body-md text-body-md duration-200 transform -translate-y-1/2 top-1/2 left-4 z-10 origin-[0] peer-focus:text-primary pointer-events-none">Last Name</label>
+                </div>
+            </div>
+
+            <div class="relative floating-input bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200" id="email-container">
+                <input type="email" name="email" class="block w-full px-4 pt-6 pb-2 text-on-surface bg-transparent border-0 focus:ring-0 peer placeholder-transparent" id="id_email" placeholder=" " required>
+                <label for="id_email" class="absolute text-on-surface-variant font-body-md text-body-md duration-200 transform -translate-y-1/2 top-1/2 left-4 z-10 origin-[0] peer-focus:text-primary pointer-events-none">Email Address</label>
+            </div>
+
+            <div class="relative floating-input bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200" id="phone-container">
+                <input type="text" name="phone" class="block w-full px-4 pt-6 pb-2 text-on-surface bg-transparent border-0 focus:ring-0 peer placeholder-transparent" id="id_phone" placeholder=" " required>
+                <label for="id_phone" class="absolute text-on-surface-variant font-body-md text-body-md duration-200 transform -translate-y-1/2 top-1/2 left-4 z-10 origin-[0] peer-focus:text-primary pointer-events-none">Phone Number</label>
+            </div>
+
+            <div class="relative floating-input bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200" id="password-container">
+                <input type="password" name="password" class="block w-full px-4 pt-6 pb-2 text-on-surface bg-transparent border-0 focus:ring-0 peer placeholder-transparent pr-12" id="id_password" placeholder=" " required>
+                <label for="id_password" class="absolute text-on-surface-variant font-body-md text-body-md duration-200 transform -translate-y-1/2 top-1/2 left-4 z-10 origin-[0] peer-focus:text-primary pointer-events-none">Password</label>
+                <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" onclick="togglePassword('id_password', this)">
+                    <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+            </div>
+
+            <div class="relative floating-input bg-surface-container-low rounded-xl border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all duration-200" id="confirm-container">
+                <input type="password" name="confirm_password" class="block w-full px-4 pt-6 pb-2 text-on-surface bg-transparent border-0 focus:ring-0 peer placeholder-transparent pr-12" id="id_confirm_password" placeholder=" " required>
+                <label for="id_confirm_password" class="absolute text-on-surface-variant font-body-md text-body-md duration-200 transform -translate-y-1/2 top-1/2 left-4 z-10 origin-[0] peer-focus:text-primary pointer-events-none">Confirm Password</label>
+                <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" onclick="togglePassword('id_confirm_password', this)">
+                    <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+            </div>
+
+            <ul id="password-rules" class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">
+                <li id="length" class="text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-error" id="length-icon">close</span> At least 8 characters</li>
+                <li id="number" class="text-on-surface-variant flex items-center gap-2 mt-1"><span class="material-symbols-outlined text-[16px] text-error" id="number-icon">close</span> Contains a number</li>
+                <li id="special" class="text-on-surface-variant flex items-center gap-2 mt-1"><span class="material-symbols-outlined text-[16px] text-error" id="special-icon">close</span> Contains a special character</li>
+            </ul>
+
+            <button type="submit" class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-sm font-label-sm text-label-sm text-on-primary bg-primary hover:bg-on-primary-fixed-variant focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary active:scale-95 transition-all duration-200 mt-2">
+                Create Account
+            </button>
+        </form>
+
+        <div class="mt-8 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                Already have an account? 
+                <a href="{% url 'login' %}" class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-variant transition-colors ml-1">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("signupForm");
+        const email = document.getElementById("id_email");
+        const phone = document.getElementById("id_phone");
+        const password = document.getElementById("id_password");
+        const confirm = document.getElementById("id_confirm_password");
+        
+        const emailContainer = document.getElementById("email-container");
+        const phoneContainer = document.getElementById("phone-container");
+        const passwordContainer = document.getElementById("password-container");
+        const confirmContainer = document.getElementById("confirm-container");
+
+        const lengthRule = document.getElementById("length");
+        const lengthIcon = document.getElementById("length-icon");
+        const numberRule = document.getElementById("number");
+        const numberIcon = document.getElementById("number-icon");
+        const specialRule = document.getElementById("special");
+        const specialIcon = document.getElementById("special-icon");
+
+        function updateRule(element, iconElement, isValid) {
+            if (isValid) {
+                element.classList.remove("text-on-surface-variant");
+                element.classList.add("text-emerald-600");
+                iconElement.textContent = "check";
+                iconElement.classList.remove("text-error");
+                iconElement.classList.add("text-emerald-600");
+            } else {
+                element.classList.add("text-on-surface-variant");
+                element.classList.remove("text-emerald-600");
+                iconElement.textContent = "close";
+                iconElement.classList.add("text-error");
+                iconElement.classList.remove("text-emerald-600");
+            }
+        }
+
+        password.addEventListener("input", function () {
+            const value = password.value;
+            updateRule(lengthRule, lengthIcon, value.length >= 8);
+            updateRule(numberRule, numberIcon, /\d/.test(value));
+            updateRule(specialRule, specialIcon, /[!@#$%^&*]/.test(value));
+        });
+
+        phone.addEventListener("input", function () {
+            if (/^\d{10}$/.test(phone.value)) {
+                phoneContainer.classList.add("valid-border");
+                phoneContainer.classList.remove("error-border");
+            } else {
+                phoneContainer.classList.add("error-border");
+                phoneContainer.classList.remove("valid-border");
+            }
+        });
+
+        email.addEventListener("input", function () {
+            if (email.value.includes("@")) {
+                emailContainer.classList.add("valid-border");
+                emailContainer.classList.remove("error-border");
+            } else {
+                emailContainer.classList.add("error-border");
+                emailContainer.classList.remove("valid-border");
+            }
+        });
+
+        form.addEventListener("submit", function (e) {
+            let valid = true;
+            [emailContainer, phoneContainer, passwordContainer, confirmContainer].forEach(field => {
+                field.classList.remove("error-border");
+            });
+
+            if (!email.value.includes("@")) {
+                emailContainer.classList.add("error-border");
+                valid = false;
+            }
+
+            if (!/^\d{10}$/.test(phone.value)) {
+                phoneContainer.classList.add("error-border");
+                valid = false;
+            }
+
+            if (password.value !== confirm.value || password.value.length < 8) {
+                passwordContainer.classList.add("error-border");
+                confirmContainer.classList.add("error-border");
+                valid = false;
+            }
+
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    function togglePassword(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        const icon = btn.querySelector("span");
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.textContent = "visibility";
+        } else {
+            input.type = "password";
+            icon.textContent = "visibility_off";
+        }
+    }
+</script>
+{% endblock %}

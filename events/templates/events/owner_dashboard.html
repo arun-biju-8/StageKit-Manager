@@ -1,0 +1,266 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
+    <div>
+        <h2 class="font-display text-h1 text-on-surface">Owner Dashboard</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your inventory and incoming bookings.</p>
+    </div>
+    <div class="flex items-center gap-4">
+        <button class="bg-surface-container-low text-on-surface p-2 rounded-full hover:bg-surface-container-high transition-colors border border-outline-variant/50 relative">
+            <span class="material-symbols-outlined">notifications</span>
+            {% if pending_bookings %}
+            <span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full animate-pulse"></span>
+            {% endif %}
+        </button>
+    </div>
+</div>
+
+<div class="px-margin pb-xl max-w-[1440px] mx-auto w-full">
+    <!-- Metric Cards Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-lg">
+        <!-- Card 1 -->
+        <div class="glass-panel rounded-xl p-6 relative overflow-hidden group border border-outline-variant/30 shadow-lg">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+            <div class="flex justify-between items-start mb-4 relative z-10">
+                <div class="p-3 bg-primary-container/20 rounded-lg text-primary">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                </div>
+            </div>
+            <div class="relative z-10">
+                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Total Inventory</h3>
+                <p class="font-display text-display text-on-surface">{{ total_inventory_count }}</p>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="glass-panel rounded-xl p-6 relative overflow-hidden group border border-outline-variant/30 shadow-lg">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+            <div class="flex justify-between items-start mb-4 relative z-10">
+                <div class="p-3 bg-secondary-container/20 rounded-lg text-secondary">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+                </div>
+            </div>
+            <div class="relative z-10">
+                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Active Orders</h3>
+                <p class="font-display text-display text-on-surface">{{ active_orders_count }}</p>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="glass-panel rounded-xl p-6 relative overflow-hidden group border border-outline-variant/30 shadow-lg">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-error-container/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+            <div class="flex justify-between items-start mb-4 relative z-10">
+                <div class="p-3 bg-error-container/20 rounded-lg text-error">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
+                </div>
+            </div>
+            <div class="relative z-10">
+                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Pending Requests</h3>
+                <p class="font-display text-display text-on-surface">{{ pending_bookings|length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Bookings Section -->
+    <h3 class="font-display text-h2 text-on-surface mb-4">Pending Booking Requests</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-lg">
+        {% for booking in pending_bookings %}
+        <div class="glass-panel rounded-xl p-6 border-l-4 border-error shadow-md hover:shadow-lg transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h4 class="font-h3 text-h3 text-on-surface">{{ booking.item.name }}</h4>
+                    <p class="text-sm text-on-surface-variant">Requested by: {{ booking.customer.username }}</p>
+                </div>
+                <span class="bg-error-container text-on-error-container text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                    {{ booking.status }}
+                </span>
+            </div>
+            <div class="mb-6 grid grid-cols-2 gap-2 text-sm text-on-surface-variant">
+                <div class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Start: {{ booking.start_date|date:"M d, Y" }}</div>
+                <div class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">event</span> End: {{ booking.end_date|date:"M d, Y" }}</div>
+            </div>
+            <div class="flex gap-2">
+                <a href="{% url 'manage_booking' booking.id 'approve' %}" class="flex-1 text-center bg-primary text-on-primary py-2 rounded-lg text-label-sm hover:scale-95 transition-transform">Approve</a>
+                <button 
+                    class="flex-1 text-center bg-surface-container-high text-on-surface py-2 rounded-lg text-label-sm hover:scale-95 transition-transform"
+                    onclick="openBookingModal(this)"
+                    data-id="{{ booking.id }}"
+                    data-item="{{ booking.item.name }}"
+                    data-customer="{{ booking.customer.get_full_name|default:booking.customer.username }}"
+                    data-quantity="{{ booking.quantity }}"
+                    data-venue="{{ booking.venue|default:'Not specified' }}"
+                    data-district="{{ booking.district }}"
+                    data-transport="{{ booking.needs_transportation }}"
+                    data-setup="{{ booking.needs_setup }}"
+                    data-price="{{ booking.total_price }}"
+                >Details</button>
+                <a href="{% url 'manage_booking' booking.id 'reject' %}" class="flex-1 text-center bg-error-container/20 text-error py-2 rounded-lg text-label-sm hover:scale-95 transition-transform">Reject</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full glass-panel rounded-xl p-8 text-center text-on-surface-variant border border-outline-variant/30">
+            <span class="material-symbols-outlined text-4xl mb-2 opacity-50">check_circle</span>
+            <p>No pending requests right now.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- All Bookings Table -->
+    <h3 class="font-display text-h2 text-on-surface mb-4">All Bookings</h3>
+    <div class="glass-panel rounded-xl flex flex-col border border-outline-variant/30 shadow-lg mb-xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Item</th>
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Customer</th>
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Dates</th>
+                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    {% for booking in all_bookings %}
+                    <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
+                        <td class="px-6 py-4 font-medium text-on-surface">{{ booking.item.name }}</td>
+                        <td class="px-6 py-4 text-on-surface-variant">{{ booking.customer.username }}</td>
+                        <td class="px-6 py-4 text-on-surface-variant">{{ booking.start_date|date:"M d" }} - {{ booking.end_date|date:"M d, Y" }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button 
+                                class="text-primary hover:underline font-label-sm text-xs"
+                                onclick="openBookingModal(this)"
+                                data-id="{{ booking.id }}"
+                                data-item="{{ booking.item.name }}"
+                                data-customer="{{ booking.customer.get_full_name|default:booking.customer.username }}"
+                                data-quantity="{{ booking.quantity }}"
+                                data-venue="{{ booking.venue|default:'Not specified' }}"
+                                data-district="{{ booking.district }}"
+                                data-transport="{{ booking.needs_transportation }}"
+                                data-setup="{{ booking.needs_setup }}"
+                                data-price="{{ booking.total_price }}"
+                            >
+                                View Details
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-on-surface-variant">No past or active bookings.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Details Modal -->
+<div id="bookingModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-low w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-outline-variant animate-fade-in">
+        <div class="px-8 py-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-high/50">
+            <h3 class="font-display text-h2 text-on-surface">Booking Details</h3>
+            <button onclick="closeBookingModal()" class="p-2 hover:bg-surface-container-highest rounded-full transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        
+        <div class="p-8 space-y-6">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-3xl">inventory_2</span>
+                </div>
+                <div>
+                    <h4 id="modalItemName" class="font-h2 text-h2 text-on-surface">Item Name</h4>
+                    <p id="modalCustomer" class="text-sm text-on-surface-variant">by Customer Name</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 pt-4">
+                <div class="space-y-1">
+                    <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">Quantity</p>
+                    <p id="modalQuantity" class="font-h3 text-on-surface">0 Units</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">Total Price</p>
+                    <p id="modalPrice" class="font-h3 text-primary">₹0.00</p>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">Venue & District</p>
+                <div class="flex items-center gap-2 text-on-surface">
+                    <span class="material-symbols-outlined text-[18px] text-primary">location_on</span>
+                    <p id="modalVenue" class="font-body-md"></p>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-outline-variant/30 space-y-3">
+                <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mb-2">Additional Requirements</p>
+                
+                <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/50">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">local_shipping</span>
+                        <span class="text-sm text-on-surface">Transportation</span>
+                    </div>
+                    <span id="modalTransport" class="text-xs font-bold px-2 py-1 rounded bg-surface-container-highest"></span>
+                </div>
+
+                <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/50">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">construction</span>
+                        <span class="text-sm text-on-surface">Tech Support</span>
+                    </div>
+                    <span id="modalTech" class="text-xs font-bold px-2 py-1 rounded bg-surface-container-highest"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-8 py-6 bg-surface-container-high/50 flex gap-4">
+            <button onclick="closeBookingModal()" class="flex-1 py-3 bg-surface-container-highest text-on-surface rounded-xl font-label-sm text-label-sm hover:bg-outline-variant/20 transition-all">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openBookingModal(button) {
+    const data = button.dataset;
+    document.getElementById('modalItemName').textContent = data.item;
+    document.getElementById('modalCustomer').textContent = "Requested by " + data.customer;
+    document.getElementById('modalQuantity').textContent = data.quantity + " Units";
+    document.getElementById('modalVenue').textContent = data.venue + ", " + data.district;
+    document.getElementById('modalPrice').textContent = "₹" + parseFloat(data.price).toLocaleString();
+    
+    const transport = data.transport;
+    document.getElementById('modalTransport').textContent = transport === 'True' ? 'YES' : 'NO';
+    document.getElementById('modalTransport').className = transport === 'True' ? 'text-xs font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-800' : 'text-xs font-bold px-2 py-1 rounded bg-surface-container-highest text-on-surface-variant';
+    
+    const setup = data.setup;
+    document.getElementById('modalTech').textContent = setup === 'True' ? 'YES' : 'NO';
+    document.getElementById('modalTech').className = setup === 'True' ? 'text-xs font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-800' : 'text-xs font-bold px-2 py-1 rounded bg-surface-container-highest text-on-surface-variant';
+    
+    document.getElementById('bookingModal').classList.remove('hidden');
+}
+
+function closeBookingModal() {
+    document.getElementById('bookingModal').classList.add('hidden');
+}
+
+// Close on outside click
+window.onclick = function(event) {
+    const modal = document.getElementById('bookingModal');
+    if (event.target == modal) {
+        closeBookingModal();
+    }
+}
+</script>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+</style>
+{% endblock %}

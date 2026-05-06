@@ -1,0 +1,152 @@
+{% extends 'events/base.html' %}
+
+{% block content %}
+<!-- TopNavBar -->
+<nav class="sticky top-0 z-50 flex justify-between items-center px-margin h-20 w-full bg-white/70 dark:bg-inverse-surface/40 backdrop-blur-xl border-b border-white/20 dark:border-white/10 shadow-sm shadow-primary/5">
+<div class="flex items-center gap-4">
+    <!-- Empty div to keep layout if needed, fixed logo handles the branding -->
+</div>
+<div class="hidden md:flex items-center gap-8">
+    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">Features</a>
+    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">About</a>
+</div>
+<div class="flex items-center gap-4">
+    <a href="{% url 'login' %}" class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-sm text-label-sm font-bold mr-2">Login</a>
+    <a href="{% url 'role_select' %}" class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm text-label-sm shadow-lg shadow-primary/20 hover:scale-95 transition-transform duration-200">Sign Up</a>
+</div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center justify-center px-margin py-xl overflow-hidden bg-surface-dim">
+<div class="absolute inset-0 z-0">
+<img alt="Hero Background" class="w-full h-full object-cover opacity-90 mix-blend-multiply filter blur-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFeHhah5tdir-jh3sc32aVC--djvx3qGihxCkk7L9X78jYL6H4ab98cOc68qqW6on87BFYs6tcPnTp7XJv_L43dyeYAc1jS0OLh4zQnxEvjWHwJbN6KZ8yPmdt_dJ-L1YXZypa1am4h1kbVhYi_p5KhadsXA4w8XhMBxYwOgwebIqJFc7cZkmzYo11DBy7_fMoqMIT_R_62naMTQCEaiEt2ai-N2m7KxpVb5S-bfe9hzherJKNpzBwkEWlcPaeT1ioCsyaxh3RXo0s"/>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-dim/80"></div>
+</div>
+<div class="relative z-10 max-w-4xl mx-auto text-center">
+<div class="bg-surface/80 backdrop-blur-2xl p-lg rounded-xl border border-white/20 shadow-2xl shadow-primary/10 mb-8 inline-block">
+<h1 class="font-display text-display text-on-surface mb-6">Master the Stage.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-2xl mx-auto">Elevate your production logistics with unparalleled precision. StageKit Manager brings clarity to the chaos of live event execution.</p>
+<div class="flex gap-4 justify-center">
+    <a href="{% url 'role_select' %}" class="bg-primary text-on-primary px-8 py-4 rounded-lg font-label-sm text-label-sm shadow-lg shadow-primary/20 hover:scale-95 transition-transform duration-200 cubic-bezier(0.4, 0, 0.2, 1) inline-block">Get Started</a>
+</div>
+</div>
+</div>
+</section>
+<!-- About Us Section -->
+<section class="py-xl px-margin max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row gap-12 items-center">
+<div class="w-full md:w-1/2">
+<h2 class="font-display text-display text-on-surface mb-6">Bringing Order to Chaos</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-6">Live events are inherently chaotic. Thousands of moving parts, tight deadlines, and unforgiving margins for error. StageKit Manager was born from the trenches of high-end production to provide a single source of truth.</p>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Our mission is simple: to deliver <strong class="text-primary">Luminous Precision</strong>. We build tools that allow technical directors, project managers, and crew chiefs to operate with absolute certainty, ensuring every cable, light, and console is exactly where it needs to be, when it needs to be there.</p>
+</div>
+<div class="w-full md:w-1/2 relative">
+<div class="aspect-square rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 relative group">
+<img alt="About Us" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACQpDnmU5tm2WozcaTj0lwrgKmeuFc-QAaOcNbOxgNcCBibIhq7eiM9otnqab5UZb9ahI-6KD6_8Nq1HYntk3KbVR04-Z5LMiUCKQkVYVh4_2R9a6LD7tXw54gRFfo00pUF93-W9jdGDN6O75i8bWeyVkQ3GKIIensqFRMUUYoqWWrakR6jJJSz52R5LEsPZ4YWZJ79JIMyqJX2xEzACWyJDh6XR7tIZw6htmxuigdO-Uf7di6hNYCupel0s9j5gJEcWVOjMfJX2sl"/>
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent mix-blend-multiply"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Services Section (Expanded) -->
+<section class="py-xl px-margin bg-surface-container-low">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-display text-h1 text-on-surface mb-4">Luminous Precision in Every Detail</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Comprehensive tools designed specifically for high-end audio-visual production teams.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1: Inventory Logistics -->
+<div class="relative overflow-hidden rounded-xl group bg-surface shadow-lg shadow-primary/5 hover:-translate-y-2 transition-transform duration-300 h-[400px]">
+<div class="absolute inset-0 z-0">
+<img alt="Inventory Logistics" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzjbLBs6Mj2oKDbpoiDOU7B5oZFD6-iRMR8q4Oanr-yGhMF58oDffHCAQQhuUbG4rDtI1n39gUOryinuQAu2kD_0bdHJeu2i264fnBlMLLUR_R59FvwTTDUetmb3MUkKTvebOVcBcVowKlgVVuMUfbENwKXL3p9k9v6VV0bwXNvgBQqpfJYSBEQcLXK6x5HNWfbKyiUb-7O9ITCNu_hXXH5YHbIuduoLHaxx45D410Eq_EprteUWZ8YjmDTxcLxmylkEvKQjzihSbb"/>
+</div>
+<div class="relative z-10 p-6 h-full flex flex-col justify-end bg-gradient-to-t from-surface-dim/95 via-surface/80 to-transparent backdrop-blur-md pt-32">
+<span class="material-symbols-outlined text-primary mb-3 bg-surface p-2 rounded-full w-max" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<h3 class="font-display text-h3 text-on-surface mb-2">Inventory Logistics</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time tracking of every cable, light, and console across all active productions.</p>
+</div>
+</div>
+<!-- Card 2: On-site Tech Support -->
+<div class="relative overflow-hidden rounded-xl group bg-surface shadow-lg shadow-primary/5 hover:-translate-y-2 transition-transform duration-300 h-[400px]">
+<div class="absolute inset-0 z-0">
+<img alt="On-site Technical Support" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeNJIfUT2-tZ9gHLoUNv-9sX-IC7Wd47ffOOJz5dyWGG46gHLQySqILy_R72Pe9t2FrQRvfAeSh30efaNjsnTK3MsLAxP3A7wvT3-fTbB_Dk5kH0kTDTF3-QnD6qZicToyWyA-JwegROiA6q7ljoz6OUn2Rbk7IDpowvTWwTuZ6KvsTQ1gxILYRbttwk4OA-rDedTFr2TXBUZ8ifN2A7E1eRruMnU-wr0IQOaAbi3_zMLl3MzXcbBxo1GYeRvK3ot7TXYddk5Q6iE-"/>
+</div>
+<div class="relative z-10 p-6 h-full flex flex-col justify-end bg-gradient-to-t from-surface-dim/95 via-surface/80 to-transparent backdrop-blur-md pt-32">
+<span class="material-symbols-outlined text-primary mb-3 bg-surface p-2 rounded-full w-max" style="font-variation-settings: 'FILL' 1;">support_agent</span>
+<h3 class="font-display text-h3 text-on-surface mb-2">On-site Tech Support</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Deploy specialized crews with instant access to schematics and troubleshooting guides.</p>
+</div>
+</div>
+<!-- Card 3: System Integration -->
+<div class="relative overflow-hidden rounded-xl group bg-surface shadow-lg shadow-primary/5 hover:-translate-y-2 transition-transform duration-300 h-[400px]">
+<div class="absolute inset-0 z-0">
+<img alt="System Integration" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_O6-WbIL0jpO9KuPeiCS85HtMpxzDMlm09NIOObCaQp2inshCanUi0FUoJQkk9Fop4-wZQ4FEke7gfhNgfyDGvqAt6OiPMnVt4FSoSyX-sOvPY4t1M-gFvOBSiPdY5-B-rQ_YGPWfCeRnwuu6g-FyP8lHbIsVrc2q6loRU7L3J2h4reXpyiGWEugbpzjJrKQrcanIubVl5sv6KXNCM-LgB4JG3R5BK54gi23UUhyWyzkFphMecbYq-50FX9XAZnFkzgV_bdbk21Uh"/>
+</div>
+<div class="relative z-10 p-6 h-full flex flex-col justify-end bg-gradient-to-t from-surface-dim/95 via-surface/80 to-transparent backdrop-blur-md pt-32">
+<span class="material-symbols-outlined text-primary mb-3 bg-surface p-2 rounded-full w-max" style="font-variation-settings: 'FILL' 1;">hub</span>
+<h3 class="font-display text-h3 text-on-surface mb-2">System Integration</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Seamlessly connect lighting, audio, and video protocols into unified control interfaces.</p>
+</div>
+</div>
+<!-- Card 4: Fleet Management -->
+<div class="relative overflow-hidden rounded-xl group bg-surface shadow-lg shadow-primary/5 hover:-translate-y-2 transition-transform duration-300 h-[400px]">
+<div class="absolute inset-0 z-0">
+<img alt="Fleet Management" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9xjX_cDvuNkDy-YkG8slTWK_93vjgaOzDEHDxU8R_XFJB6vljgNLDNqVPrllQrY18cqoUlZsEovKf1TbVV2GrkgoY8xCyQL_peZXfijWtWvy32utfV1mmJNJAZOIpjk9YC710tnA32uxY-AJn7TK_3RxrJO9mufbP9Xk0DWIvwQ-gL5ZkM42vMBTCC7TbpWDKYTUMoZADT33UhyRYdCuU6266Xh8-PQrFhKvtFw3_6oE-nBMkQFjKhj5E8C4nBPdO01GYwt6Kymay"/>
+</div>
+<div class="relative z-10 p-6 h-full flex flex-col justify-end bg-gradient-to-t from-surface-dim/95 via-surface/80 to-transparent backdrop-blur-md pt-32">
+<span class="material-symbols-outlined text-primary mb-3 bg-surface p-2 rounded-full w-max" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<h3 class="font-display text-h3 text-on-surface mb-2">Fleet Management</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Coordinate dispatch, cross-rentals, and transport logistics with pinpoint accuracy.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Specialties Section -->
+<section class="py-xl px-margin max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-display text-h1 text-on-surface mb-4">Domain Expertise</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Tailored workflows for the most demanding production environments.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-surface border border-outline-variant rounded-2xl p-8 hover:border-primary transition-colors duration-300 flex flex-col items-center text-center group">
+<div class="h-16 w-16 bg-surface-container rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors duration-300">
+<span class="material-symbols-outlined text-primary text-4xl">stadium</span>
+</div>
+<h3 class="font-display text-h2 text-on-surface mb-4">Large-scale Concerts</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Managing multi-truck tours, complex rigging plots, and massive PA deployments with ease.</p>
+</div>
+<div class="bg-surface border border-outline-variant rounded-2xl p-8 hover:border-primary transition-colors duration-300 flex flex-col items-center text-center group">
+<div class="h-16 w-16 bg-surface-container rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors duration-300">
+<span class="material-symbols-outlined text-primary text-4xl">business_center</span>
+</div>
+<h3 class="font-display text-h2 text-on-surface mb-4">Corporate Galas</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Discreet, flawless execution for high-stakes corporate events where presentation is everything.</p>
+</div>
+<div class="bg-surface border border-outline-variant rounded-2xl p-8 hover:border-primary transition-colors duration-300 flex flex-col items-center text-center group">
+<div class="h-16 w-16 bg-surface-container rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors duration-300">
+<span class="material-symbols-outlined text-primary text-4xl">cell_tower</span>
+</div>
+<h3 class="font-display text-h2 text-on-surface mb-4">Broadcast</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Rock-solid infrastructure tracking for live television, streaming, and studio environments.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 px-margin flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto bg-surface-dim dark:bg-inverse-surface border-t border-outline-variant mt-auto">
+<div class="mb-4 md:mb-0">
+<span class="font-display text-body-lg font-bold text-on-surface">StageKit Manager</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">© 2024 StageKit Manager. Luminous Precision in Logistics.</p>
+</div>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline-offset-4 hover:underline transition-colors duration-200" href="#">Help Center</a>
+</div>
+</footer>
+
+{% endblock %}

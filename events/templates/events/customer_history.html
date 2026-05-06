@@ -1,0 +1,48 @@
+{% extends 'events/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="px-margin pt-margin">
+    <div class="mb-8">
+        <h1 class="font-display text-h1 text-on-surface">Booking History</h1>
+        <p class="font-body-md text-on-surface-variant">Review your past rentals and completed events.</p>
+    </div>
+
+    <div class="glass-panel rounded-3xl overflow-hidden border border-outline-variant/30 shadow-xl">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-container-high/50 text-on-surface-variant font-label-sm text-xs uppercase tracking-widest">
+                    <th class="px-6 py-4">Item</th>
+                    <th class="px-6 py-4 text-center">Qty</th>
+                    <th class="px-6 py-4">Event Date</th>
+                    <th class="px-6 py-4 text-right">Price Paid</th>
+                    <th class="px-6 py-4 text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10">
+                {% for item in history %}
+                <tr class="table-row-hover grayscale opacity-75">
+                    <td class="px-6 py-4 font-bold text-on-surface">{{ item.item.name }}</td>
+                    <td class="px-6 py-4 text-center font-mono">{{ item.quantity }}</td>
+                    <td class="px-6 py-4 text-on-surface-variant">{{ item.start_date }} - {{ item.end_date }}</td>
+                    <td class="px-6 py-4 text-right font-bold">₹{{ item.total_price }}</td>
+                    <td class="px-6 py-4 text-center">
+                        {% if item.status == 'Completed' %}
+                        <span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold border border-outline-variant">Completed</span>
+                        {% else %}
+                        <span class="px-3 py-1 rounded-full bg-error/10 text-error text-[10px] uppercase font-bold border border-error/20">Rejected</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-20 text-center text-on-surface-variant opacity-50">
+                        <span class="material-symbols-outlined text-4xl mb-2">history</span>
+                        <p>No previous booking history.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
