@@ -456,15 +456,13 @@ def admin_delete_inventory(request, item_id):
             if item.owner and item.owner.user:
                 owner_email = item.owner.user.email
 
-            if owner_email:
-                # send_mail(
-                #     f"Notice: Item '{item_name}' has been removed",
-                #     f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
-                #     settings.DEFAULT_FROM_EMAIL,
-                #     [owner_email],
-                #     fail_silently=True
-                # )
-                pass
+            if item.owner and item.owner.user:
+                owner_user = item.owner.user
+                # 🔔 In-App Notification
+                Notification.objects.create(
+                    user=owner_user,
+                    message=f"Admin Notice: Your item '{item_name}' has been removed from the system."
+                )
                 
             item.delete()
             messages.success(request, f"Item '{item_name}' deleted successfully.")
@@ -491,15 +489,12 @@ def admin_delete_booking(request, booking_id):
             if booking.customer:
                 customer_email = booking.customer.email
 
-            if customer_email:
-                # send_mail(
-                #     f"Notice: Your booking for '{item_name}' has been cancelled",
-                #     f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
-                #     settings.DEFAULT_FROM_EMAIL,
-                #     [customer_email],
-                #     fail_silently=True
-                # )
-                pass
+            if booking.customer:
+                # 🔔 In-App Notification
+                Notification.objects.create(
+                    user=booking.customer,
+                    message=f"Admin Notice: Your booking for '{item_name}' has been cancelled and removed."
+                )
                 
             booking.delete()
             messages.success(request, f"Booking for '{item_name}' deleted successfully.")
