@@ -55,6 +55,17 @@
             <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'return_reminders' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>assignment_return</span>
             <span class="font-label-sm text-label-sm">Return Reminders</span>
         </a>
+        <a href="{% url 'notifications' %}" class="flex items-center justify-between px-4 py-3 {% if request.resolver_match.url_name == 'notifications' %}bg-primary-container text-on-primary-container font-semibold shadow-inner scale-95{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high hover:translate-x-1{% endif %} transition-all rounded-xl duration-300 group">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'notifications' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>notifications</span>
+                <span class="font-label-sm text-label-sm">Notifications</span>
+            </div>
+            {% if unread_notifications_count > 0 %}
+            <span class="w-5 h-5 bg-error text-on-error text-[10px] flex items-center justify-center rounded-full font-bold shadow-sm group-hover:scale-110 transition-transform">
+                {{ unread_notifications_count }}
+            </span>
+            {% endif %}
+        </a>
         {% endif %}
 
         <!-- Customer Links -->
