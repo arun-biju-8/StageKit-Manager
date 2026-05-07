@@ -136,20 +136,20 @@ def dashboard(request):
             'active_orders_count': active_orders_count
         })
     elif role == 'admin':
-        # Ensure all users have profiles to avoid template crash
+        # 🛡️ Safety Pre-flight: Ensure every user has a Profile record
         from .models import Profile
-        for u in User.objects.all():
-            try:
-                _ = u.profile
-            except Exception:
+        all_users = User.objects.all()
+        for u in all_users:
+            if not hasattr(u, 'profile'):
                 r = 'admin' if u.is_superuser else 'customer'
                 Profile.objects.create(user=u, role=r)
 
         users = User.objects.all().order_by('-date_joined')
-        owners = Owner.objects.all().order_by('company_name')
-        customers = Customer.objects.all().order_by('user__username')
-        inventory = Inventory.objects.all().order_by('-id')
-        bookings = Booking.objects.all().order_by('-created_at')
+        owners = Owner.objects.select_related('user').all().order_by('company_name')
+        customers = Customer.objects.select_related('user').all().order_by('user__username')
+        inventory = Inventory.objects.select_related('owner__user').all().order_by('-id')
+        bookings = Booking.objects.select_related('item', 'customer').all().order_by('-created_at')
+        
         return render(request, 'events/admin_dashboard.html', {
             'users': users,
             'owners': owners,
