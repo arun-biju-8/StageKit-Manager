@@ -490,10 +490,17 @@ def admin_delete_booking(request, booking_id):
                 customer_email = booking.customer.email
 
             if booking.customer:
-                # 🔔 In-App Notification
+                # 🔔 In-App Notification for Customer
                 Notification.objects.create(
                     user=booking.customer,
                     message=f"Admin Notice: Your booking for '{item_name}' has been cancelled and removed."
+                )
+            
+            if booking.item and booking.item.owner:
+                # 🔔 In-App Notification for Owner
+                Notification.objects.create(
+                    user=booking.item.owner.user,
+                    message=f"Admin Notice: A booking for your item '{item_name}' (ID: {booking.id}) has been cancelled and removed by the administrator."
                 )
                 
             booking.delete()
