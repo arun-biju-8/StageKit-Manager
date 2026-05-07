@@ -440,56 +440,70 @@ def delete_user(request, user_id):
 
 @login_required
 def admin_delete_inventory(request, item_id):
-    if not request.user.profile.role == 'admin':
+    # 🛡️ Safety: Ensure admin has a profile
+    profile = getattr(request.user, 'profile', None)
+    if not profile or profile.role != 'admin':
         messages.error(request, "Permission denied")
         return redirect('dashboard')
     
-    item = get_object_or_404(Inventory, id=item_id)
-    
-    if request.method == "POST":
-        item_name = item.name
-        # 🛡️ Safe lookup for Owner Email
-        owner_email = None
-        if item.owner and item.owner.user:
-            owner_email = item.owner.user.email
+    try:
+        item = get_object_or_404(Inventory, id=item_id)
+        
+        if request.method == "POST":
+            item_name = item.name
+            # 🛡️ Safe lookup for Owner Email
+            owner_email = None
+            if item.owner and item.owner.user:
+                owner_email = item.owner.user.email
 
-        if owner_email:
-            try:
-                subject = f"Notice: Item '{item_name}' has been removed"
-                message = f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [owner_email], fail_silently=True)
-            except Exception as e:
-                print(f"Email error: {e}")
-            
-        item.delete()
-        messages.success(request, f"Item '{item_name}' deleted successfully.")
+            if owner_email:
+                send_mail(
+                    f"Notice: Item '{item_name}' has been removed",
+                    f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
+                    settings.DEFAULT_FROM_EMAIL,
+                    [owner_email],
+                    fail_silently=True
+                )
+                
+            item.delete()
+            messages.success(request, f"Item '{item_name}' deleted successfully.")
+    except Exception as e:
+        messages.error(request, f"Error deleting inventory: {str(e)}")
+        
     return redirect('dashboard')
 
 @login_required
 def admin_delete_booking(request, booking_id):
-    if not request.user.profile.role == 'admin':
+    # 🛡️ Safety: Ensure admin has a profile
+    profile = getattr(request.user, 'profile', None)
+    if not profile or profile.role != 'admin':
         messages.error(request, "Permission denied")
         return redirect('dashboard')
     
-    booking = get_object_or_404(Booking, id=booking_id)
-    
-    if request.method == "POST":
-        item_name = booking.item.name if booking.item else "Unknown Item"
-        # 🛡️ Safe lookup for Customer Email
-        customer_email = None
-        if booking.customer:
-            customer_email = booking.customer.email
+    try:
+        booking = get_object_or_404(Booking, id=booking_id)
+        
+        if request.method == "POST":
+            item_name = booking.item.name if booking.item else "Unknown Item"
+            # 🛡️ Safe lookup for Customer Email
+            customer_email = None
+            if booking.customer:
+                customer_email = booking.customer.email
 
-        if customer_email:
-            try:
-                subject = f"Notice: Your booking for '{item_name}' has been cancelled"
-                message = f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [customer_email], fail_silently=True)
-            except Exception as e:
-                print(f"Email error: {e}")
-            
-        booking.delete()
-        messages.success(request, f"Booking for '{item_name}' deleted successfully.")
+            if customer_email:
+                send_mail(
+                    f"Notice: Your booking for '{item_name}' has been cancelled",
+                    f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
+                    settings.DEFAULT_FROM_EMAIL,
+                    [customer_email],
+                    fail_silently=True
+                )
+                
+            booking.delete()
+            messages.success(request, f"Booking for '{item_name}' deleted successfully.")
+    except Exception as e:
+        messages.error(request, f"Error deleting booking: {str(e)}")
+        
     return redirect('dashboard')
 
 @login_required
