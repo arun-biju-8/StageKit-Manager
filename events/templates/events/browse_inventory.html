@@ -74,8 +74,8 @@
                         <span class="text-[10px] text-on-surface-variant uppercase font-bold">Available</span>
                         <span class="text-sm font-mono font-bold text-on-surface">{{ item.quantity }} Units</span>
                     </div>
-                    <a href="{% url 'book_item' item.id %}" class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-label-sm text-xs shadow-md shadow-primary/20 hover:bg-surface-tint active:scale-95 transition-all">
-                        Book Now
+                    <a href="{% url 'add_to_cart' item.id %}" class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-label-sm text-xs shadow-md shadow-primary/20 hover:bg-surface-tint active:scale-95 transition-all">
+                        Add to Cart
                     </a>
                 </div>
             </div>

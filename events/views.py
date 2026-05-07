@@ -7,7 +7,8 @@ from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CustomerSignupForm, OwnerSignupForm, InventoryForm, BookingForm, ProfileForm, UserUpdateForm, OwnerUpdateForm
-from .models import Profile, Customer, Owner, Inventory, Booking, Notification
+from .models import Profile, Customer, Owner, Inventory, Booking, Notification, Cart, CartItem
+from django.utils import timezone
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -602,6 +603,160 @@ def edit_profile(request):
     }
     return render(request, 'events/edit_profile.html', context)
 
+@login_required
+def add_to_cart(request, item_id):
+    if request.user.profile.role != 'customer':
+        messages.error(request, "Only customers can use the cart.")
+        return redirect('dashboard')
+        
+    item = get_object_or_404(Inventory, id=item_id)
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    
+    # Standard defaults for cart items (can be edited in cart view)
+    start_date = timezone.now().date() + timedelta(days=1)
+    end_date = start_date
+    
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart, 
+        item=item,
+        defaults={
+            'start_date': start_date,
+            'end_date': end_date,
+            'quantity': 1
+        }
+    )
+    
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+        
+    messages.success(request, f"Added {item.name} to your cart.")
+    return redirect('browse_inventory')
+
+@login_required
+def view_cart(request):
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    items = cart.items.all().select_related('item')
+    
+    # Calculate preliminary total
+    total = sum(i.item.price_per_day * i.quantity for i in items)
+    
+    return render(request, 'events/view_cart.html', {
+        'cart': cart,
+        'items': items,
+        'total': total
+    })
+
+@login_required
+def remove_from_cart(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    name = cart_item.item.name
+    cart_item.delete()
+    messages.success(request, f"Removed {name} from cart.")
+    return redirect('view_cart')
+
+@login_required
+def update_cart_quantity(request, item_id, action):
+    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    if action == 'increase':
+        if cart_item.quantity < cart_item.item.quantity:
+            cart_item.quantity += 1
+            cart_item.save()
+        else:
+            messages.warning(request, f"Only {cart_item.item.quantity} units available.")
+    elif action == 'decrease':
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+        else:
+            cart_item.delete()
+            messages.success(request, "Item removed from cart.")
+            
+    return redirect('view_cart')
+
+@login_required
+def checkout(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = cart.items.all()
+    
+    if not cart_items:
+        messages.error(request, "Your cart is empty.")
+        return redirect('browse_inventory')
+        
+    # Check categories for conditional UI
+    has_sound = any(i.item.category == 'sound' for i in cart_items)
+    has_light = any(i.item.category == 'light' for i in cart_items)
+    
+    # Calculate initial totals for display
+    subtotal = sum(i.item.price_per_day * i.quantity for i in cart_items)
+
+    if request.method == "POST":
+        venue = request.POST.get('venue')
+        district = request.POST.get('district')
+        needs_transport = request.POST.get('needs_transportation') == 'on'
+        
+        needs_sound_tech = request.POST.get('needs_sound_tech') == 'on'
+        needs_light_tech = request.POST.get('needs_light_tech') == 'on'
+        
+        total_tech_cost = Decimal('0.00')
+        if needs_sound_tech and has_sound:
+            total_tech_cost += Decimal('2500.00') # Sound Engineer + Helper
+        if needs_light_tech and has_light:
+            total_tech_cost += Decimal('2500.00') # Light Engineer + Helper
+            
+        # Create Bookings
+        for ci in cart_items:
+            booking = Booking.objects.create(
+                customer=request.user,
+                item=ci.item,
+                quantity=ci.quantity,
+                start_date=ci.start_date or (timezone.now().date() + timedelta(days=1)),
+                end_date=ci.end_date or (timezone.now().date() + timedelta(days=1)),
+                venue=venue,
+                district=district,
+                needs_transportation=needs_transport,
+                needs_setup=(needs_sound_tech or needs_light_tech)
+            )
+            
+            # Individual Item Cost Calculation
+            delta = booking.end_date - booking.start_date
+            days = max(delta.days + 1, 1)
+            booking.item_price = booking.item.price_per_day * booking.quantity * days
+            
+            # Transport Cost (shared logic)
+            transport_per_item = Decimal('0.00')
+            if needs_transport:
+                if district and district.lower() == booking.item.owner.district.lower():
+                    transport_per_item = Decimal('1000.00') / len(cart_items)
+                else:
+                    transport_per_item = Decimal('2500.00') / len(cart_items)
+            
+            booking.transport_cost = transport_per_item
+            booking.tech_cost = total_tech_cost / len(cart_items)
+            booking.total_price = booking.item_price + booking.transport_cost + booking.tech_cost
+            booking.save()
+            
+        # Clear Cart
+        cart_items.delete()
+        messages.success(request, "All items booked successfully!")
+        return redirect('dashboard')
+        
+    return render(request, 'events/checkout.html', {
+        'cart': cart,
+        'items': cart_items,
+        'has_sound': has_sound,
+        'has_light': has_light,
+        'subtotal': subtotal
+    })
+@login_required
+def delete_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, customer=request.user)
+    if booking.status == 'Pending':
+        booking.delete()
+        messages.success(request, "Booking request canceled successfully.")
+    else:
+        messages.error(request, "You can only cancel pending requests.")
+    return redirect('customer_pending')
 @login_required
 def notifications(request):
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')

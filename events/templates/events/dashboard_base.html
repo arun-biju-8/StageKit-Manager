@@ -74,6 +74,10 @@
             <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'browse_inventory' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>search</span>
             <span class="font-label-sm text-label-sm">Browse Catalog</span>
         </a>
+        <a href="{% url 'view_cart' %}" class="flex items-center gap-3 px-4 py-3 {% if request.resolver_match.url_name == 'view_cart' %}bg-primary-container text-on-primary-container font-semibold shadow-inner scale-95{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high hover:translate-x-1{% endif %} transition-all rounded-xl duration-300">
+            <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'view_cart' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>shopping_cart</span>
+            <span class="font-label-sm text-label-sm">View Cart</span>
+        </a>
         <a href="{% url 'customer_bookings' %}" class="flex items-center gap-3 px-4 py-3 {% if request.resolver_match.url_name == 'customer_bookings' %}bg-primary-container text-on-primary-container font-semibold shadow-inner scale-95{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high hover:translate-x-1{% endif %} transition-all rounded-xl duration-300">
             <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'customer_bookings' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>calendar_today</span>
             <span class="font-label-sm text-label-sm">My Bookings</span>

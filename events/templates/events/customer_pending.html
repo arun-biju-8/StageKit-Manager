@@ -16,6 +16,7 @@
                     <th class="px-6 py-4 text-center">Qty</th>
                     <th class="px-6 py-4 text-right">Total Est. Cost</th>
                     <th class="px-6 py-4 text-center">Status</th>
+                    <th class="px-6 py-4 text-center">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-outline-variant/10">
@@ -32,6 +33,11 @@
                     <td class="px-6 py-4 text-right font-bold text-primary">₹{{ req.total_price }}</td>
                     <td class="px-6 py-4 text-center">
                         <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] uppercase font-bold border border-amber-500/20">Awaiting Approval</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <a href="{% url 'delete_booking' req.id %}" onclick="return confirm('Are you sure you want to cancel this request?')" class="text-error hover:text-error-hover transition-colors">
+                            <span class="material-symbols-outlined">delete</span>
+                        </a>
                     </td>
                 </tr>
                 {% empty %}

@@ -1,0 +1,98 @@
+{% extends 'events/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <h2 class="font-display text-display-sm text-on-surface">Your Equipment Cart</h2>
+        <a href="{% url 'browse_inventory' %}" class="text-primary hover:underline flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Continue Browsing
+        </a>
+    </div>
+
+    {% if items %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Items List -->
+        <div class="lg:col-span-2 space-y-4">
+            {% for item in items %}
+            <div class="bg-surface p-6 rounded-xl border border-outline-variant flex gap-6 items-center shadow-sm">
+                <div class="w-24 h-24 rounded-lg bg-surface-dim overflow-hidden flex-shrink-0">
+                    {% if item.item.images %}
+                    <img src="{{ item.item.images.url }}" alt="{{ item.item.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-on-surface-variant/20">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-display text-title-lg text-on-surface">{{ item.item.name }}</h3>
+                            <p class="text-on-surface-variant text-body-sm">{{ item.item.category|title }} • {{ item.item.owner.company_name }}</p>
+                        </div>
+                        <p class="font-display text-title-lg text-primary">₹{{ item.item.price_per_day }}<span class="text-body-sm text-on-surface-variant font-normal">/day</span></p>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <div class="flex items-center gap-4 text-on-surface-variant">
+                            <div class="flex items-center gap-3 bg-surface-dim rounded-lg p-1 border border-outline-variant">
+                                <a href="{% url 'update_cart_quantity' item.id 'decrease' %}" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded-md transition-colors">
+                                    <span class="material-symbols-outlined text-sm">remove</span>
+                                </a>
+                                <span class="font-mono font-bold text-on-surface px-2">{{ item.quantity }}</span>
+                                <a href="{% url 'update_cart_quantity' item.id 'increase' %}" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded-md transition-colors">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </a>
+                            </div>
+                            <span class="w-1 h-1 rounded-full bg-outline"></span>
+                            <span class="text-body-md">{{ item.start_date }} - {{ item.end_date }}</span>
+                        </div>
+                        <a href="{% url 'remove_from_cart' item.id %}" class="text-error hover:text-error-hover text-body-sm font-bold flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            Remove
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Order Summary -->
+        <div class="bg-surface p-8 rounded-xl border border-outline-variant h-fit sticky top-24 shadow-sm">
+            <h3 class="font-display text-title-xl text-on-surface mb-6">Booking Summary</h3>
+            <div class="space-y-4 mb-8">
+                <div class="flex justify-between text-on-surface-variant">
+                    <span>Equipment Subtotal</span>
+                    <span>₹{{ total }}</span>
+                </div>
+                <div class="flex justify-between text-on-surface-variant italic text-body-sm">
+                    <span>* Taxes & service fees added at checkout</span>
+                </div>
+                <div class="pt-4 border-t border-outline flex justify-between items-center">
+                    <span class="font-bold text-on-surface">Total Estimation</span>
+                    <span class="font-display text-headline-sm text-primary">₹{{ total }}</span>
+                </div>
+            </div>
+            <a href="{% url 'checkout' %}" class="w-full bg-primary text-on-primary py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform text-center block">
+                Proceed to Checkout
+            </a>
+            <p class="mt-4 text-center text-on-surface-variant text-label-sm">
+                Next step: Technician & Transport details
+            </p>
+        </div>
+    </div>
+    {% else %}
+    <div class="bg-surface p-16 rounded-xl border border-outline-variant text-center">
+        <div class="w-20 h-20 bg-surface-dim rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-on-surface-variant/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        </div>
+        <h3 class="text-title-xl text-on-surface mb-2">Your cart is empty</h3>
+        <p class="text-on-surface-variant mb-8">Looks like you haven't added any gear for your stage yet.</p>
+        <a href="{% url 'browse_inventory' %}" class="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold hover:scale-95 transition-transform inline-block">
+            Start Browsing Gear
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
