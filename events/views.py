@@ -329,7 +329,7 @@ def manage_booking(request, booking_id, action):
                           f'Thank you for using StageKit Manager!'
                 
                 recipient_list = [booking.customer.email]
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list)
+                # send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list)
             except Exception as e:
                 print(f"Error sending email: {e}")
 
@@ -363,17 +363,17 @@ def forgot_password(request):
             profile.save()
             
             # Send Email
-            try:
-                send_mail(
-                    'Your StageKit OTP',
-                    f'Your OTP for password reset is: {otp}. It is valid for 10 minutes.',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
-                )
-            except Exception as e:
-                # If email fails, display the OTP in the message for testing purposes since it's a dev environment without real email setup yet.
-                messages.error(request, f"Email failed to send. Developer mode OTP: {otp}")
+            # try:
+            #     send_mail(
+            #         'Your StageKit OTP',
+            #         f'Your OTP for password reset is: {otp}. It is valid for 10 minutes.',
+            #         settings.DEFAULT_FROM_EMAIL,
+            #         [email],
+            #         fail_silently=False,
+            #     )
+            # except Exception as e:
+            #     # If email fails, display the OTP in the message for testing purposes since it's a dev environment without real email setup yet.
+            #     messages.error(request, f"Email failed to send. Developer mode OTP: {otp}")
             return redirect('verify_otp', email=email)
         except User.DoesNotExist:
             messages.error(request, "No user found with this email.")
@@ -457,13 +457,14 @@ def admin_delete_inventory(request, item_id):
                 owner_email = item.owner.user.email
 
             if owner_email:
-                send_mail(
-                    f"Notice: Item '{item_name}' has been removed",
-                    f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
-                    settings.DEFAULT_FROM_EMAIL,
-                    [owner_email],
-                    fail_silently=True
-                )
+                # send_mail(
+                #     f"Notice: Item '{item_name}' has been removed",
+                #     f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
+                #     settings.DEFAULT_FROM_EMAIL,
+                #     [owner_email],
+                #     fail_silently=True
+                # )
+                pass
                 
             item.delete()
             messages.success(request, f"Item '{item_name}' deleted successfully.")
@@ -491,13 +492,14 @@ def admin_delete_booking(request, booking_id):
                 customer_email = booking.customer.email
 
             if customer_email:
-                send_mail(
-                    f"Notice: Your booking for '{item_name}' has been cancelled",
-                    f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
-                    settings.DEFAULT_FROM_EMAIL,
-                    [customer_email],
-                    fail_silently=True
-                )
+                # send_mail(
+                #     f"Notice: Your booking for '{item_name}' has been cancelled",
+                #     f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you.",
+                #     settings.DEFAULT_FROM_EMAIL,
+                #     [customer_email],
+                #     fail_silently=True
+                # )
+                pass
                 
             booking.delete()
             messages.success(request, f"Booking for '{item_name}' deleted successfully.")
