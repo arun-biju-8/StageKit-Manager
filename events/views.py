@@ -372,8 +372,8 @@ def forgot_password(request):
                     fail_silently=False,
                 )
             except Exception as e:
-                # If email fails, display the OTP in the message for testing purposes since it's a dev environment without real email setup yet.
-                messages.error(request, f"Email failed to send. Developer mode OTP: {otp}")
+                # 🛠️ Diagnostic: Show the ACTUAL error from Zoho
+                messages.error(request, f"SMTP Error: {str(e)}. OTP: {otp}")
             return redirect('verify_otp', email=email)
         except User.DoesNotExist:
             messages.error(request, "No user found with this email.")
