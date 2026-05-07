@@ -1,212 +1,203 @@
 {% extends 'events/dashboard_base.html' %}
 
 {% block dashboard_content %}
-<!-- Desktop Header Content -->
-<div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
-    <div>
-        <h2 class="font-display text-h1 text-on-surface">System Overview</h2>
-        <p class="font-body-md text-body-md text-on-surface-variant mt-1">High-level metrics and centralized administration.</p>
+<!-- Overview Section (Header + Cards) -->
+<div id="overview-section">
+    <!-- Desktop Header Content -->
+    <div class="hidden md:flex justify-between items-center px-margin pt-margin pb-md">
+        <div>
+            <h2 class="font-display text-h1 text-on-surface">System Overview</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage system resources by role.</p>
+        </div>
     </div>
-    <div class="flex items-center gap-4">
-        <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input type="text" class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-label-sm w-64" placeholder="Search system...">
+
+    <div class="px-margin mb-lg max-w-[1440px] mx-auto w-full">
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <div class="glass-panel rounded-xl p-6 border border-outline-variant/30 shadow-lg">
+                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Total Users</h3>
+                <p class="font-display text-display text-on-surface">{{ users|length }}</p>
+            </div>
+            <div class="glass-panel rounded-xl p-6 border border-outline-variant/30 shadow-lg">
+                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Active Owners</h3>
+                <p class="font-display text-display text-on-surface">{{ owners|length }}</p>
+            </div>
+            <div class="glass-panel rounded-xl p-6 border border-outline-variant/30 shadow-lg">
+                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Total Orders</h3>
+                <p class="font-display text-display text-on-surface">{{ bookings|length }}</p>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="px-margin pb-xl max-w-[1440px] mx-auto w-full">
-    <!-- Metric Cards Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-lg">
-        <!-- Card 1 -->
-        <div class="glass-panel rounded-xl p-6 relative overflow-hidden group border border-outline-variant/30 shadow-lg">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-                <div class="p-3 bg-primary-container/20 rounded-lg text-primary">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
-                </div>
-            </div>
-            <div class="relative z-10">
-                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Total Users</h3>
-                <p class="font-display text-display text-on-surface">{{ users|length }}</p>
-            </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="glass-panel rounded-xl p-6 relative overflow-hidden group border border-outline-variant/30 shadow-lg">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-                <div class="p-3 bg-secondary-container/20 rounded-lg text-secondary">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
-                </div>
-            </div>
-            <div class="relative z-10">
-                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Total Inventory</h3>
-                <p class="font-display text-display text-on-surface">{{ inventory|length }}</p>
-            </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="glass-panel rounded-xl p-6 relative overflow-hidden group border border-outline-variant/30 shadow-lg">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-tertiary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-                <div class="p-3 bg-tertiary-container/10 rounded-lg text-tertiary">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
-                </div>
-            </div>
-            <div class="relative z-10">
-                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Total Bookings</h3>
-                <p class="font-display text-display text-on-surface">{{ bookings|length }}</p>
-            </div>
-        </div>
-    </div>
 
     <!-- Tabbed Data Table System -->
     <div class="glass-panel rounded-xl flex flex-col border border-outline-variant/30 shadow-lg overflow-hidden">
         <!-- Tabs Header -->
         <div class="flex items-center border-b border-outline-variant/30 px-6 bg-surface-container-low/30">
             <button onclick="switchTab('users')" id="tab-users" class="px-4 py-4 font-label-sm text-label-sm text-primary font-bold border-b-2 border-primary transition-all">
-                Users
+                All Users
             </button>
             <button onclick="switchTab('inventory')" id="tab-inventory" class="px-4 py-4 font-label-sm text-label-sm text-on-surface-variant border-b-2 border-transparent hover:text-on-surface transition-all">
-                All Inventory
+                Owners & Inventory
             </button>
             <button onclick="switchTab('bookings')" id="tab-bookings" class="px-4 py-4 font-label-sm text-label-sm text-on-surface-variant border-b-2 border-transparent hover:text-on-surface transition-all">
-                All Bookings
+                Customers & Bookings
             </button>
         </div>
 
         <!-- Section: Users -->
-        <div id="section-users" class="tab-content">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">User</th>
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Role</th>
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="font-body-md text-sm">
-                        {% for u in users %}
-                        <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-primary-container/30 flex items-center justify-center text-primary font-bold">
-                                        {{ u.username|make_list|first|upper }}
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-on-surface">{{ u.username }}</div>
-                                        <div class="text-xs text-on-surface-variant">{{ u.email }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-outline-variant">
-                                    {{ u.profile.role|capfirst }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                {% if u != request.user %}
-                                <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('Delete this user?');" class="inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="p-2 text-on-surface-variant hover:text-error transition-colors">
-                                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                                    </button>
-                                </form>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <div id="section-users" class="tab-content p-6">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-outline-variant/30">
+                        <th class="py-4 font-label-sm text-on-surface-variant">User</th>
+                        <th class="py-4 font-label-sm text-on-surface-variant">Role</th>
+                        <th class="py-4 font-label-sm text-on-surface-variant text-right">Delete</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    {% for u in users %}
+                    <tr class="border-b border-outline-variant/10 hover:bg-surface-container-lowest transition-colors">
+                        <td class="py-4">
+                            <div class="font-medium text-on-surface">{{ u.username }}</div>
+                            <div class="text-xs text-on-surface-variant">{{ u.email }}</div>
+                        </td>
+                        <td class="py-4">
+                            <span class="px-2 py-0.5 rounded-full text-xs border border-outline-variant uppercase font-bold text-[10px]">
+                                {{ u.profile.role }}
+                            </span>
+                        </td>
+                        <td class="py-4 text-right">
+                            {% if u != request.user %}
+                            <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('Delete user?');">
+                                {% csrf_token %}
+                                <button type="submit" class="text-error hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section: Owners (Drill Down) -->
+        <div id="section-inventory" class="tab-content p-6 hidden">
+            <h1 class="font-display text-h1 text-on-surface mb-6">Owners</h1>
+            <div id="owners-list">
+                <h4 class="font-display text-h3 mb-4">Select an Owner to view Inventory</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% for owner in owners %}
+                    <button onclick="showOwnerInventory('{{ owner.id }}', '{{ owner.company_name }}')" class="flex items-center justify-between p-4 bg-surface-container rounded-xl border border-outline-variant hover:border-primary transition-all group">
+                        <div class="text-left">
+                            <div class="font-bold text-on-surface">{{ owner.company_name }}</div>
+                            <div class="text-xs text-on-surface-variant">{{ owner.business_type }}</div>
+                        </div>
+                        <span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Drill-down Container for Inventory -->
+            <div id="inventory-drill-down" class="hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="hideDrillDown('inventory')" class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </button>
+                    <h4 class="font-display text-h3">Inventory for <span id="current-owner-name" class="text-primary"></span></h4>
+                </div>
+                <div class="grid grid-cols-1 gap-4">
+                    {% for item in inventory %}
+                    <div class="inventory-item owner-{{ item.owner.id }} flex items-center justify-between p-4 border border-outline-variant/30 rounded-xl bg-surface-container-low hidden">
+                        <div>
+                            <div class="font-bold text-on-surface">{{ item.name }}</div>
+                            <div class="text-xs text-on-surface-variant">Qty: {{ item.quantity }} | Category: {{ item.category }}</div>
+                        </div>
+                        <form action="{% url 'admin_delete_inventory' item.id %}" method="POST" onsubmit="return confirm('Delete item and notify owner?');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-error hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
-        <!-- Section: Inventory -->
-        <div id="section-inventory" class="tab-content hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Item</th>
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Owner</th>
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="font-body-md text-sm">
-                        {% for item in inventory %}
-                        <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-on-surface">{{ item.name }}</div>
-                                <div class="text-xs text-on-surface-variant">₹{{ item.price_per_day }}/day</div>
-                            </td>
-                            <td class="px-6 py-4 text-on-surface-variant">
-                                {{ item.owner.company_name }}
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <form action="{% url 'admin_delete_inventory' item.id %}" method="POST" onsubmit="return confirm('Delete this item and notify owner?');" class="inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="p-2 text-on-surface-variant hover:text-error transition-colors">
-                                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <!-- Section: Customers (Drill Down) -->
+        <div id="section-bookings" class="tab-content p-6 hidden">
+            <h1 class="font-display text-h1 text-on-surface mb-6">Customers</h1>
+            <div id="customers-list">
+                <h4 class="font-display text-h3 mb-4">Select a Customer to view Bookings</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% for customer in customers %}
+                    <button onclick="showCustomerBookings('{{ customer.user.id }}', '{{ customer.user.username }}')" class="flex items-center justify-between p-4 bg-surface-container rounded-xl border border-outline-variant hover:border-primary transition-all group">
+                        <div class="text-left">
+                            <div class="font-bold text-on-surface">{{ customer.user.username }}</div>
+                            <div class="text-xs text-on-surface-variant">{{ customer.user.email }}</div>
+                        </div>
+                        <span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </button>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
 
-        <!-- Section: Bookings -->
-        <div id="section-bookings" class="tab-content hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Booking</th>
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Status</th>
-                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="font-body-md text-sm">
-                        {% for b in bookings %}
-                        <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-on-surface">{{ b.item.name }}</div>
-                                <div class="text-xs text-on-surface-variant">By {{ b.customer.username }}</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 py-0.5 rounded text-xs border {% if b.status == 'Approved' %}bg-success/10 text-success border-success/20{% elif b.status == 'Pending' %}bg-warning/10 text-warning border-warning/20{% else %}bg-error/10 text-error border-error/20{% endif %}">
-                                    {{ b.status }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <form action="{% url 'admin_delete_booking' b.id %}" method="POST" onsubmit="return confirm('Cancel this booking and notify customer?');" class="inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="p-2 text-on-surface-variant hover:text-error transition-colors">
-                                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <!-- Drill-down Container for Bookings -->
+            <div id="bookings-drill-down" class="hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="hideDrillDown('bookings')" class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </button>
+                    <h4 class="font-display text-h3">Booking History for <span id="current-customer-name" class="text-primary"></span></h4>
+                </div>
+                <div class="grid grid-cols-1 gap-4">
+                    {% for b in bookings %}
+                    <div class="booking-item customer-{{ b.customer.id }} flex items-center justify-between p-4 border border-outline-variant/30 rounded-xl bg-surface-container-low hidden">
+                        <div>
+                            <div class="font-bold text-on-surface">{{ b.item.name }}</div>
+                            <div class="text-xs text-on-surface-variant">Status: {{ b.status }} | Date: {{ b.start_date }}</div>
+                        </div>
+                        <form action="{% url 'admin_delete_booking' b.id %}" method="POST" onsubmit="return confirm('Cancel booking and notify customer?');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-error hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // Initial Tab Setup from URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab === 'inventory') switchTab('inventory');
+        else if (tab === 'bookings') switchTab('bookings');
+    });
+
     function switchTab(tabName) {
-        // Hide all sections
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        // Show target section
         document.getElementById('section-' + tabName).classList.remove('hidden');
         
-        // Update tab styling
+        // Hide/Show Overview
+        const overview = document.getElementById('overview-section');
+        if(tabName === 'users') {
+            overview.classList.remove('hidden');
+        } else {
+            overview.classList.add('hidden');
+        }
+
         const tabs = ['users', 'inventory', 'bookings'];
         tabs.forEach(t => {
             const el = document.getElementById('tab-' + t);
@@ -218,6 +209,37 @@
                 el.classList.add('text-on-surface-variant', 'border-transparent');
             }
         });
+        // Reset drill downs when switching main tabs
+        hideDrillDown('inventory');
+        hideDrillDown('bookings');
+    }
+
+    function showOwnerInventory(ownerId, ownerName) {
+        document.getElementById('owners-list').classList.add('hidden');
+        document.getElementById('inventory-drill-down').classList.remove('hidden');
+        document.getElementById('current-owner-name').textContent = ownerName;
+        
+        document.querySelectorAll('.inventory-item').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.owner-' + ownerId).forEach(el => el.classList.remove('hidden'));
+    }
+
+    function showCustomerBookings(customerId, customerName) {
+        document.getElementById('customers-list').classList.add('hidden');
+        document.getElementById('bookings-drill-down').classList.remove('hidden');
+        document.getElementById('current-customer-name').textContent = customerName;
+        
+        document.querySelectorAll('.booking-item').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.customer-' + customerId).forEach(el => el.classList.remove('hidden'));
+    }
+
+    function hideDrillDown(type) {
+        if(type === 'inventory') {
+            document.getElementById('owners-list').classList.remove('hidden');
+            document.getElementById('inventory-drill-down').classList.add('hidden');
+        } else {
+            document.getElementById('customers-list').classList.remove('hidden');
+            document.getElementById('bookings-drill-down').classList.add('hidden');
+        }
     }
 </script>
 {% endblock %}

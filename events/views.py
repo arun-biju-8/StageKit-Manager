@@ -146,10 +146,14 @@ def dashboard(request):
                 Profile.objects.create(user=u, role=r)
 
         users = User.objects.all().order_by('-date_joined')
+        owners = Owner.objects.all().order_by('company_name')
+        customers = Customer.objects.all().order_by('user__username')
         inventory = Inventory.objects.all().order_by('-id')
         bookings = Booking.objects.all().order_by('-created_at')
         return render(request, 'events/admin_dashboard.html', {
             'users': users,
+            'owners': owners,
+            'customers': customers,
             'inventory': inventory,
             'bookings': bookings
         })

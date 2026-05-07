@@ -20,24 +20,20 @@
 
     <div class="flex-1 flex flex-col gap-2">
         <!-- Dashboard Link (All Roles) -->
-        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 {% if request.resolver_match.url_name == 'dashboard' %}bg-primary-container text-on-primary-container font-semibold shadow-inner scale-95{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high hover:translate-x-1{% endif %} rounded-xl transition-all duration-300">
-            <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'dashboard' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>dashboard</span>
+        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 {% if request.resolver_match.url_name == 'dashboard' and not request.GET.tab %}bg-primary-container text-on-primary-container font-semibold shadow-inner scale-95{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high hover:translate-x-1{% endif %} rounded-xl transition-all duration-300">
+            <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'dashboard' and not request.GET.tab %}style="font-variation-settings: 'FILL' 1;"{% endif %}>dashboard</span>
             <span class="font-label-sm text-label-sm">Dashboard</span>
         </a>
 
         <!-- Admin Links -->
         {% if request.user.profile.role == 'admin' %}
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl hover:translate-x-1 duration-300">
-            <span class="material-symbols-outlined">inventory_2</span>
-            <span class="font-label-sm text-label-sm">Inventory</span>
+        <a href="{% url 'dashboard' %}?tab=inventory" class="flex items-center gap-3 px-4 py-3 {% if request.GET.tab == 'inventory' %}bg-primary-container text-on-primary-container font-semibold shadow-inner scale-95{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high hover:translate-x-1{% endif %} transition-all rounded-xl hover:translate-x-1 duration-300">
+            <span class="material-symbols-outlined" {% if request.GET.tab == 'inventory' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>store</span>
+            <span class="font-label-sm text-label-sm">Owners</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl hover:translate-x-1 duration-300">
-            <span class="material-symbols-outlined">calendar_today</span>
-            <span class="font-label-sm text-label-sm">Bookings</span>
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-xl hover:translate-x-1 duration-300">
-            <span class="material-symbols-outlined">group</span>
-            <span class="font-label-sm text-label-sm">Team</span>
+        <a href="{% url 'dashboard' %}?tab=bookings" class="flex items-center gap-3 px-4 py-3 {% if request.GET.tab == 'bookings' %}bg-primary-container text-on-primary-container font-semibold shadow-inner scale-95{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high hover:translate-x-1{% endif %} transition-all rounded-xl hover:translate-x-1 duration-300">
+            <span class="material-symbols-outlined" {% if request.GET.tab == 'bookings' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>group</span>
+            <span class="font-label-sm text-label-sm">Customers</span>
         </a>
         {% endif %}
 
