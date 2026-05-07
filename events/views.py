@@ -445,19 +445,24 @@ def admin_delete_inventory(request, item_id):
         return redirect('dashboard')
     
     item = get_object_or_404(Inventory, id=item_id)
-    owner_email = item.owner.user.email
-    item_name = item.name
     
     if request.method == "POST":
-        try:
-            subject = f"Notice: Item '{item_name}' has been removed"
-            message = f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [owner_email])
-        except Exception as e:
-            print(f"Email error: {e}")
+        item_name = item.name
+        # 🛡️ Safe lookup for Owner Email
+        owner_email = None
+        if item.owner and item.owner.user:
+            owner_email = item.owner.user.email
+
+        if owner_email:
+            try:
+                subject = f"Notice: Item '{item_name}' has been removed"
+                message = f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [owner_email])
+            except Exception as e:
+                print(f"Email error: {e}")
             
         item.delete()
-        messages.success(request, f"Item '{item_name}' deleted and owner notified.")
+        messages.success(request, f"Item '{item_name}' deleted successfully.")
     return redirect('dashboard')
 
 @login_required
@@ -467,19 +472,24 @@ def admin_delete_booking(request, booking_id):
         return redirect('dashboard')
     
     booking = get_object_or_404(Booking, id=booking_id)
-    customer_email = booking.customer.email
-    item_name = booking.item.name
     
     if request.method == "POST":
-        try:
-            subject = f"Notice: Your booking for '{item_name}' has been cancelled"
-            message = f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [customer_email])
-        except Exception as e:
-            print(f"Email error: {e}")
+        item_name = booking.item.name if booking.item else "Unknown Item"
+        # 🛡️ Safe lookup for Customer Email
+        customer_email = None
+        if booking.customer:
+            customer_email = booking.customer.email
+
+        if customer_email:
+            try:
+                subject = f"Notice: Your booking for '{item_name}' has been cancelled"
+                message = f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [customer_email])
+            except Exception as e:
+                print(f"Email error: {e}")
             
         booking.delete()
-        messages.success(request, f"Booking for '{item_name}' deleted and customer notified.")
+        messages.success(request, f"Booking for '{item_name}' deleted successfully.")
     return redirect('dashboard')
 
 @login_required
