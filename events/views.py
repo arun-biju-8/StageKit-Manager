@@ -457,7 +457,7 @@ def admin_delete_inventory(request, item_id):
             try:
                 subject = f"Notice: Item '{item_name}' has been removed"
                 message = f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [owner_email])
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [owner_email], fail_silently=True)
             except Exception as e:
                 print(f"Email error: {e}")
             
@@ -484,7 +484,7 @@ def admin_delete_booking(request, booking_id):
             try:
                 subject = f"Notice: Your booking for '{item_name}' has been cancelled"
                 message = f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [customer_email])
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [customer_email], fail_silently=True)
             except Exception as e:
                 print(f"Email error: {e}")
             
