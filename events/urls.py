@@ -26,4 +26,6 @@ urlpatterns = [
     path('customer/history/', views.customer_history, name='customer_history'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('notifications/', views.notifications, name='notifications'),
-]
+    path('admin/inventory/delete/<int:item_id>/', views.admin_delete_inventory, name='admin_delete_inventory'),
+    path('admin/booking/delete/<int:booking_id>/', views.admin_delete_booking, name='admin_delete_booking'),
+]

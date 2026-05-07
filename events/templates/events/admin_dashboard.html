@@ -12,10 +12,6 @@
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
             <input type="text" class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-label-sm w-64" placeholder="Search system...">
         </div>
-        <button class="bg-surface-container-low text-on-surface p-2 rounded-full hover:bg-surface-container-high transition-colors border border-outline-variant/50 relative">
-            <span class="material-symbols-outlined">notifications</span>
-            <span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-        </button>
     </div>
 </div>
 
@@ -66,116 +62,162 @@
     </div>
 
     <!-- Tabbed Data Table System -->
-    <div class="glass-panel rounded-xl flex flex-col border border-outline-variant/30 shadow-lg">
+    <div class="glass-panel rounded-xl flex flex-col border border-outline-variant/30 shadow-lg overflow-hidden">
         <!-- Tabs Header -->
-        <div class="flex items-center border-b border-outline-variant/30 px-6 pt-4">
-            <button class="px-4 py-3 font-label-sm text-label-sm text-primary font-bold border-b-2 border-primary mr-4 transition-colors">
-                All Users
+        <div class="flex items-center border-b border-outline-variant/30 px-6 bg-surface-container-low/30">
+            <button onclick="switchTab('users')" id="tab-users" class="px-4 py-4 font-label-sm text-label-sm text-primary font-bold border-b-2 border-primary transition-all">
+                Users
             </button>
-            <div class="ml-auto flex items-center gap-2 pb-2">
-                <button class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">filter_list</span>
-                    Filter
-                </button>
+            <button onclick="switchTab('inventory')" id="tab-inventory" class="px-4 py-4 font-label-sm text-label-sm text-on-surface-variant border-b-2 border-transparent hover:text-on-surface transition-all">
+                All Inventory
+            </button>
+            <button onclick="switchTab('bookings')" id="tab-bookings" class="px-4 py-4 font-label-sm text-label-sm text-on-surface-variant border-b-2 border-transparent hover:text-on-surface transition-all">
+                All Bookings
+            </button>
+        </div>
+
+        <!-- Section: Users -->
+        <div id="section-users" class="tab-content">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">User</th>
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Role</th>
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-body-md text-sm">
+                        {% for u in users %}
+                        <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-primary-container/30 flex items-center justify-center text-primary font-bold">
+                                        {{ u.username|make_list|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-on-surface">{{ u.username }}</div>
+                                        <div class="text-xs text-on-surface-variant">{{ u.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-outline-variant">
+                                    {{ u.profile.role|capfirst }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                {% if u != request.user %}
+                                <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('Delete this user?');" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="p-2 text-on-surface-variant hover:text-error transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Table Content -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
-                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">User</th>
-                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Role</th>
-                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Email</th>
-                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Joined</th>
-                        <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="font-body-md text-sm">
-                    {% for u in users %}
-                    <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-primary-container/30 flex items-center justify-center text-primary font-bold">
-                                    {{ u.username|make_list|first|upper }}
-                                </div>
-                                <div>
-                                    <div class="font-medium text-on-surface">{{ u.username }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            {% if u.profile.role == 'admin' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">Admin</span>
-                            {% elif u.profile.role == 'owner' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">Owner</span>
-                            {% else %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-high text-on-surface-variant border border-outline-variant/50">Customer</span>
-                            {% endif %}
-                        </td>
-                        <td class="px-6 py-4 text-on-surface-variant">{{ u.email }}</td>
-                        <td class="px-6 py-4 text-on-surface-variant">{{ u.date_joined|date:"M d, Y" }}</td>
-                        <td class="px-6 py-4 text-right">
-                            {% if u != request.user %}
-                            <button onclick="showDeleteModal('{{ u.id }}', '{{ u.username }}')" class="p-2 text-on-surface-variant hover:text-error transition-colors rounded-lg hover:bg-error/5">
-                                <span class="material-symbols-outlined text-[20px]">delete</span>
-                            </button>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-on-surface-variant">No users found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="hideDeleteModal()"></div>
-    <div class="glass-panel w-full max-w-md rounded-2xl p-6 relative z-10 border border-outline-variant/30 shadow-2xl animate-in fade-in zoom-in duration-200">
-        <div class="flex items-center gap-4 text-error mb-4">
-            <div class="p-3 bg-error/10 rounded-full">
-                <span class="material-symbols-outlined text-2xl">warning</span>
+        <!-- Section: Inventory -->
+        <div id="section-inventory" class="tab-content hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Item</th>
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Owner</th>
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-body-md text-sm">
+                        {% for item in inventory %}
+                        <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-on-surface">{{ item.name }}</div>
+                                <div class="text-xs text-on-surface-variant">₹{{ item.price_per_day }}/day</div>
+                            </td>
+                            <td class="px-6 py-4 text-on-surface-variant">
+                                {{ item.owner.company_name }}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <form action="{% url 'admin_delete_inventory' item.id %}" method="POST" onsubmit="return confirm('Delete this item and notify owner?');" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="p-2 text-on-surface-variant hover:text-error transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <h3 class="font-display text-xl text-on-surface">Delete User?</h3>
         </div>
-        <p class="text-on-surface-variant mb-8">
-            Are you sure you want to delete <span id="deleteUserName" class="text-on-surface font-bold"></span>? This action cannot be undone and will remove all associated data.
-        </p>
-        <div class="flex gap-3">
-            <button onclick="hideDeleteModal()" class="flex-1 py-3 px-4 border border-outline-variant rounded-xl font-label-sm text-label-sm text-on-surface hover:bg-surface-container-high transition-all">
-                Cancel
-            </button>
-            <a id="confirmDeleteBtn" href="#" class="flex-1 py-3 px-4 bg-error text-on-error rounded-xl font-label-sm text-label-sm text-center shadow-lg shadow-error/20 hover:bg-error-fixed-variant active:scale-95 transition-all">
-                Delete Account
-            </a>
+
+        <!-- Section: Bookings -->
+        <div id="section-bookings" class="tab-content hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-outline-variant/30 bg-surface-container-lowest/50">
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Booking</th>
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium">Status</th>
+                            <th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-medium text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-body-md text-sm">
+                        {% for b in bookings %}
+                        <tr class="hover:bg-surface-container-lowest transition-colors border-b border-outline-variant/10">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-on-surface">{{ b.item.name }}</div>
+                                <div class="text-xs text-on-surface-variant">By {{ b.customer.username }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-0.5 rounded text-xs border {% if b.status == 'Approved' %}bg-success/10 text-success border-success/20{% elif b.status == 'Pending' %}bg-warning/10 text-warning border-warning/20{% else %}bg-error/10 text-error border-error/20{% endif %}">
+                                    {{ b.status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <form action="{% url 'admin_delete_booking' b.id %}" method="POST" onsubmit="return confirm('Cancel this booking and notify customer?');" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="p-2 text-on-surface-variant hover:text-error transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    function showDeleteModal(userId, username) {
-        const modal = document.getElementById('deleteModal');
-        const nameSpan = document.getElementById('deleteUserName');
-        const confirmBtn = document.getElementById('confirmDeleteBtn');
+    function switchTab(tabName) {
+        // Hide all sections
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        // Show target section
+        document.getElementById('section-' + tabName).classList.remove('hidden');
         
-        nameSpan.textContent = username;
-        confirmBtn.href = `/user/delete/${userId}/`;
-        
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
-
-    function hideDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        // Update tab styling
+        const tabs = ['users', 'inventory', 'bookings'];
+        tabs.forEach(t => {
+            const el = document.getElementById('tab-' + t);
+            if(t === tabName) {
+                el.classList.add('text-primary', 'font-bold', 'border-primary');
+                el.classList.remove('text-on-surface-variant', 'border-transparent');
+            } else {
+                el.classList.remove('text-primary', 'font-bold', 'border-primary');
+                el.classList.add('text-on-surface-variant', 'border-transparent');
+            }
+        });
     }
 </script>
 {% endblock %}

@@ -435,6 +435,50 @@ def delete_user(request, user_id):
     return redirect('dashboard')
 
 @login_required
+def admin_delete_inventory(request, item_id):
+    if not request.user.profile.role == 'admin':
+        messages.error(request, "Permission denied")
+        return redirect('dashboard')
+    
+    item = get_object_or_404(Inventory, id=item_id)
+    owner_email = item.owner.user.email
+    item_name = item.name
+    
+    if request.method == "POST":
+        try:
+            subject = f"Notice: Item '{item_name}' has been removed"
+            message = f"Hello,\n\nDue to some issues your item '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [owner_email])
+        except Exception as e:
+            print(f"Email error: {e}")
+            
+        item.delete()
+        messages.success(request, f"Item '{item_name}' deleted and owner notified.")
+    return redirect('dashboard')
+
+@login_required
+def admin_delete_booking(request, booking_id):
+    if not request.user.profile.role == 'admin':
+        messages.error(request, "Permission denied")
+        return redirect('dashboard')
+    
+    booking = get_object_or_404(Booking, id=booking_id)
+    customer_email = booking.customer.email
+    item_name = booking.item.name
+    
+    if request.method == "POST":
+        try:
+            subject = f"Notice: Your booking for '{item_name}' has been cancelled"
+            message = f"Hello,\n\nDue to some issues your booking for '{item_name}' has been removed by the admin from StageKit Manager.\n\nThank you."
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [customer_email])
+        except Exception as e:
+            print(f"Email error: {e}")
+            
+        booking.delete()
+        messages.success(request, f"Booking for '{item_name}' deleted and customer notified.")
+    return redirect('dashboard')
+
+@login_required
 def booking_requests(request):
     if request.user.profile.role != 'owner':
         return redirect('dashboard')
