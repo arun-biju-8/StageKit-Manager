@@ -3,7 +3,7 @@
 db.sqlite3
 .env
 media/
-static/
+staticfiles/
 .vscode/
 .idea/
 *.log
