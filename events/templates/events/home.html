@@ -20,12 +20,20 @@
 <main class="flex-grow">
 <!-- Hero Section -->
 <section class="relative min-h-[921px] flex items-center justify-center px-margin py-xl overflow-hidden bg-surface-dim">
-<div class="absolute inset-0 z-0">
-<img alt="Hero Background" class="w-full h-full object-cover opacity-90 mix-blend-multiply filter blur-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFeHhah5tdir-jh3sc32aVC--djvx3qGihxCkk7L9X78jYL6H4ab98cOc68qqW6on87BFYs6tcPnTp7XJv_L43dyeYAc1jS0OLh4zQnxEvjWHwJbN6KZ8yPmdt_dJ-L1YXZypa1am4h1kbVhYi_p5KhadsXA4w8XhMBxYwOgwebIqJFc7cZkmzYo11DBy7_fMoqMIT_R_62naMTQCEaiEt2ai-N2m7KxpVb5S-bfe9hzherJKNpzBwkEWlcPaeT1ioCsyaxh3RXo0s"/>
-<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-dim/80"></div>
-</div>
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {% load static %}
+        <video 
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            class="w-full h-full object-cover opacity-80 mix-blend-multiply">
+            <source src="{% static 'events/videos/hero_bg.mp4' %}" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-dim/80"></div>
+    </div>
 <div class="relative z-10 max-w-4xl mx-auto text-center">
-<div class="bg-surface/80 backdrop-blur-2xl p-lg rounded-xl border border-white/20 shadow-2xl shadow-primary/10 mb-8 inline-block">
+<div class="bg-surface/30 backdrop-blur-xl p-lg rounded-xl border border-white/10 shadow-2xl shadow-primary/10 mb-8 inline-block">
 <h1 class="font-display text-display text-on-surface mb-6">Master the Stage.</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-2xl mx-auto">Elevate your production logistics with unparalleled precision. StageKit Manager brings clarity to the chaos of live event execution.</p>
 <div class="flex gap-4 justify-center">
