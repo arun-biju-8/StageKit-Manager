@@ -363,17 +363,17 @@ def forgot_password(request):
             profile.save()
             
             # Send Email
-            # try:
-            #     send_mail(
-            #         'Your StageKit OTP',
-            #         f'Your OTP for password reset is: {otp}. It is valid for 10 minutes.',
-            #         settings.DEFAULT_FROM_EMAIL,
-            #         [email],
-            #         fail_silently=False,
-            #     )
-            # except Exception as e:
-            #     # If email fails, display the OTP in the message for testing purposes since it's a dev environment without real email setup yet.
-            #     messages.error(request, f"Email failed to send. Developer mode OTP: {otp}")
+            try:
+                send_mail(
+                    'Your StageKit OTP',
+                    f'Your OTP for password reset is: {otp}. It is valid for 10 minutes.',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                # If email fails, display the OTP in the message for testing purposes since it's a dev environment without real email setup yet.
+                messages.error(request, f"Email failed to send. Developer mode OTP: {otp}")
             return redirect('verify_otp', email=email)
         except User.DoesNotExist:
             messages.error(request, "No user found with this email.")
@@ -608,4 +608,4 @@ def notifications(request):
     # Mark all as read when viewing the page
     Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
     return render(request, 'events/notifications.html', {'notifications': notifications})
-
+
